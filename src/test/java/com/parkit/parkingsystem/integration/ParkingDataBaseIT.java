@@ -3,7 +3,6 @@ package com.parkit.parkingsystem.integration;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.sql.Date;
 
 import org.junit.jupiter.api.AfterAll;
