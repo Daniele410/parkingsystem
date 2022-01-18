@@ -28,7 +28,7 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 @ExtendWith(MockitoExtension.class)
 public class ParkingDataBaseIT {
 
-	private static final String VehiculeRegNumber = "ABCDEF";
+	private static final String VehiculeRegNumber = "ABCDEFG";
 	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
 	private static DataBasePrepareService dataBasePrepareService;
 
@@ -105,12 +105,10 @@ public class ParkingDataBaseIT {
 	}
 
 	private ParkingSpot any(Serializable class1) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	private Ticket any(Class<Ticket> class1) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
