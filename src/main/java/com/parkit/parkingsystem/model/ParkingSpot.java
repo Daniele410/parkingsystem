@@ -1,7 +1,11 @@
 package com.parkit.parkingsystem.model;
 
 import com.parkit.parkingsystem.constants.ParkingType;
-
+/**
+ * 
+ * cette classe permet de stocker et de récupérer des valeurs de la BDD
+ *
+ */
 public class ParkingSpot {
     private int number;
     private ParkingType parkingType;

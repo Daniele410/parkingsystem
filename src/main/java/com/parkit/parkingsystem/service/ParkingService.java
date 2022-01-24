@@ -11,6 +11,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
 
+/**
+ * 
+ * Cette classe traite à la fois l'entrée et la sortie du véhicule pour se garer
+ *
+ */
 public class ParkingService {
 
 	private static final Logger logger = LogManager.getLogger("ParkingService");

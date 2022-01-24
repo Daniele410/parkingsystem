@@ -3,6 +3,11 @@ package com.parkit.parkingsystem.service;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.model.Ticket;
 
+/**
+ * 
+ * cette classe calcule le prix payé par l'utilisateur pour sortir du parking
+ *
+ */
 public class FareCalculatorService {
 
 	public void calculateFare(Ticket ticket) {
@@ -12,13 +17,13 @@ public class FareCalculatorService {
 
 		@SuppressWarnings("deprecation")
 		double inHour = ticket.getInTime().getHours();
+
 		@SuppressWarnings("deprecation")
 		double outHour = ticket.getOutTime().getHours();
 
 		// TODO: Some tests are failing here. Need to check if this logic is correct
 		double duration = outHour - inHour;
-		
-		
+
 		switch (ticket.getParkingSpot().getParkingType()) {
 		case CAR: {
 			ticket.setPrice((duration / 1000 / 60 / 60) * Fare.CAR_RATE_PER_HOUR);
