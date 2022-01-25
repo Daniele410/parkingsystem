@@ -14,8 +14,8 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 
 /**
  * 
- * @author danozzo cette classe contient des méthodes qui permettent
- *         l'interaction avec le système et le base de données
+ * Cette classe contient des méthodes qui permettent l'interaction avec le
+ * système et le base de données
  */
 
 public class ParkingSpotDAO {

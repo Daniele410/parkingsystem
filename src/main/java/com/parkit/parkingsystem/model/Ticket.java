@@ -14,7 +14,6 @@ public class Ticket {
 	private ParkingSpot parkingSpot;
 	private String vehicleRegNumber;
 	private double price;
-	@SuppressWarnings("unused")
 	private boolean isDiscountPrice;
 	private Date inTime;
 	private Date outTime;
@@ -68,7 +67,7 @@ public class Ticket {
 	}
 
 	public boolean isDiscountPrice() {
-		return false;
+		return isDiscountPrice;
 	}
 
 	public void setDiscountPrice(boolean isDiscountPrice) {
