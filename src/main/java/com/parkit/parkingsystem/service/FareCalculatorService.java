@@ -4,6 +4,8 @@ import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.model.Ticket;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
+import java.time.Duration;
+
 /**
  * 
  * cette classe calcule le prix payé par l'utilisateur pour sortir du parking
@@ -12,39 +14,31 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class FareCalculatorService {
 
 	public void calculateFare(Ticket ticket) {
-		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
+		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 		}
 
-		
-//		@SuppressWarnings("deprecation")
-//		double inHour = ticket.getInTime().getHours();
-//
-//		
-//		@SuppressWarnings("deprecation")
-//		double outHour = ticket.getOutTime().getHours();
-
 		// TODO: Some tests are failing here. Need to check if this logic is correct
 		//double duration = outHour - inHour;
-		double duration = SECONDS.between(ticket.getInTime().toInstant(), ticket.getOutTime().toInstant());
+		//double duration = Duration.between(ticket.getInTime(), ticket.getOutTime()).toMinutes();
+		//créer une méthode avec ce qui est écrit ligne 23
+		double duration = calculateTimeInParking(ticket);
+		
+		//créer une méthode en utilisant ticketDAO.isReccuring pour savoir si la discount est de 1 ou 0.95
+		double discount = calculateDicount(ticket.getVehicleRegNumber());
 		// Durée mise à zéro si moins de 30 minutes
-		if (duration < 30 * 60) {
+		if (duration < 30 ) {
 			duration = 0;
 		}
 
 		switch (ticket.getParkingSpot().getParkingType()) {
 		case CAR: {
-			ticket.setPrice((duration / 1000 / 60 / 60) * Fare.CAR_RATE_PER_HOUR);
-			if (duration > 1800) {
-				ticket.setPrice(duration / 3600 * Fare.CAR_RATE_PER_HOUR);
-			}
+			ticket.setPrice(duration * Fare.CAR_RATE_PER_MINUTE * discount);
 			break;
 		}
 		case BIKE: {
-			ticket.setPrice((duration / 1000 / 60 / 60) * Fare.BIKE_RATE_PER_HOUR);
-			if (duration > 1800) {
-				ticket.setPrice(duration / 3600 * Fare.BIKE_RATE_PER_HOUR);
-			}
+			ticket.setPrice(duration * Fare.BIKE_RATE_PER_MINUTE * discount);
+
 			break;
 		}
 		default:

@@ -9,6 +9,8 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -25,7 +27,6 @@ public class ParkingService {
 	private InputReaderUtil inputReaderUtil;
 	private ParkingSpotDAO parkingSpotDAO;
 	private TicketDAO ticketDAO;
-	private boolean isRecurring = false;
 
 	public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
 		this.inputReaderUtil = inputReaderUtil;
@@ -43,11 +44,14 @@ public class ParkingService {
 				boolean isCarInside = ticketDAO.isCarInside(vehicleRegNumber);
 				if (!isCarInside) {
 					// Sinon on sort de la méthode
+					if (ticketDAO.isRecurring(vehicleRegNumber)) {
+						System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+					}
 					parkingSpot.setAvailable(false);
 					parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
 																// false
 
-					Date inTime = new Date();
+					LocalDateTime inTime = LocalDateTime.now();
 					Ticket ticket = new Ticket();
 					// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 					// ticket.setId(ticketID);
@@ -117,13 +121,13 @@ public class ParkingService {
 		try {
 			String vehicleRegNumber = getVehichleRegNumber();
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
-			Date outTime = new Date();
+			LocalDateTime outTime = LocalDateTime.now();
 			ticket.setOutTime(outTime);
 			fareCalculatorService.calculateFare(ticket);
 			
 			// for a recurring user
-						if (isRecurring) {
-							ticket.setPrice(ticket.getPrice() * 0.95);}
+			//if (isRecurring) {
+							//ticket.setPrice(ticket.getPrice() * 0.95);}
 			
 			if (ticketDAO.updateTicket(ticket)) {
 				ParkingSpot parkingSpot = ticket.getParkingSpot();
