@@ -25,6 +25,7 @@ public class ParkingService {
 	private InputReaderUtil inputReaderUtil;
 	private ParkingSpotDAO parkingSpotDAO;
 	private TicketDAO ticketDAO;
+	private boolean isRecurring = false;
 
 	public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO) {
 		this.inputReaderUtil = inputReaderUtil;
@@ -60,7 +61,8 @@ public class ParkingService {
 					System.out.println("Please park your vehicle in spot number:" + parkingSpot.getId());
 					System.out.println("Recorded in-time for vehicle number:" + vehicleRegNumber + " is:" + inTime);
 				} else {
-					System.out.println("Car Already Inside please exit your car or select another vehicule registration number");
+					System.out.println(
+							"Car Already Inside please exit your car or select another vehicule registration number");
 				}
 			}
 		} catch (Exception e) {
@@ -118,6 +120,11 @@ public class ParkingService {
 			Date outTime = new Date();
 			ticket.setOutTime(outTime);
 			fareCalculatorService.calculateFare(ticket);
+			
+			// for a recurring user
+						if (isRecurring) {
+							ticket.setPrice(ticket.getPrice() * 0.95);}
+			
 			if (ticketDAO.updateTicket(ticket)) {
 				ParkingSpot parkingSpot = ticket.getParkingSpot();
 				parkingSpot.setAvailable(true);
@@ -131,5 +138,8 @@ public class ParkingService {
 		} catch (Exception e) {
 			logger.error("Unable to process exiting vehicle", e);
 		}
+		
+		
 	}
+	
 }

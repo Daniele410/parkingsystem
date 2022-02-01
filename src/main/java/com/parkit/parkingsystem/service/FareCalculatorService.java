@@ -2,6 +2,7 @@ package com.parkit.parkingsystem.service;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.model.Ticket;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
  * 
@@ -16,16 +17,16 @@ public class FareCalculatorService {
 		}
 
 		
-		@SuppressWarnings("deprecation")
-		double inHour = ticket.getInTime().getHours();
-
-		
-		@SuppressWarnings("deprecation")
-		double outHour = ticket.getOutTime().getHours();
+//		@SuppressWarnings("deprecation")
+//		double inHour = ticket.getInTime().getHours();
+//
+//		
+//		@SuppressWarnings("deprecation")
+//		double outHour = ticket.getOutTime().getHours();
 
 		// TODO: Some tests are failing here. Need to check if this logic is correct
-		double duration = outHour - inHour;
-		
+		//double duration = outHour - inHour;
+		double duration = SECONDS.between(ticket.getInTime().toInstant(), ticket.getOutTime().toInstant());
 		// Durée mise à zéro si moins de 30 minutes
 		if (duration < 30 * 60) {
 			duration = 0;
