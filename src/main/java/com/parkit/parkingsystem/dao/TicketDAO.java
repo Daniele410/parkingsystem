@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.temporal.Temporal;
 
 public class TicketDAO {
 
@@ -171,5 +172,18 @@ public class TicketDAO {
 		}
 		return false;
 
+	}
+
+	
+
+	public static Temporal getInTime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public static Temporal getOutTime() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

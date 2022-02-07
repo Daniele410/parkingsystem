@@ -1,10 +1,10 @@
 package com.parkit.parkingsystem.service;
 
-import com.parkit.parkingsystem.constants.Fare;
-import com.parkit.parkingsystem.model.Ticket;
-import static java.time.temporal.ChronoUnit.SECONDS;
-
 import java.time.Duration;
+
+import com.parkit.parkingsystem.constants.Fare;
+import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.model.Ticket;
 
 /**
  * 
@@ -27,6 +27,7 @@ public class FareCalculatorService {
 		//créer une méthode en utilisant ticketDAO.isReccuring pour savoir si la discount est de 1 ou 0.95
 		double discount = calculateDicount(ticket.getVehicleRegNumber());
 		// Durée mise à zéro si moins de 30 minutes
+		
 		if (duration < 30 ) {
 			duration = 0;
 		}
@@ -46,5 +47,15 @@ public class FareCalculatorService {
 		}
 		
 		
+	}
+
+	private double calculateDicount(String vehicleRegNumber) {
+		Duration.between(TicketDAO.getOutTime(), TicketDAO.getOutTime()).toMinutes();
+		return 0;
+	}
+
+	private double calculateTimeInParking(Ticket ticket) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
