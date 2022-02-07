@@ -66,4 +66,14 @@ public class Ticket {
 		this.outTime = outTime2;
 	}
 
+	public void setInTime(Date inTime2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOutTime(Date outTime2) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
