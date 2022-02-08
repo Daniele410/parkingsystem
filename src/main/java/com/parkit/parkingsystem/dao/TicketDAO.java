@@ -1,18 +1,18 @@
 package com.parkit.parkingsystem.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.time.temporal.Temporal;
 
 public class TicketDAO {
 
@@ -63,13 +63,13 @@ public class TicketDAO {
 				ticket.setVehicleRegNumber(vehicleRegNumber);
 				ticket.setPrice(rs.getDouble(3));
 				ticket.setInTime(rs.getTimestamp(4).toLocalDateTime());
-				ticket.setOutTime(rs.getTimestamp(5).toLocalDateTime());
+				ticket.setOutTime((rs.getTimestamp(5) == null) ? null : rs.getTimestamp(5).toLocalDateTime());
 				//ticket.setDiscountPrice(rs.getBoolean(6));
 			}
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
 		} catch (Exception ex) {
-			logger.error("Error fetching next available slot", ex);
+			logger.error("Error fetching ticket info", ex);
 		} finally {
 
 			dataBaseConfig.closeConnection(con);
@@ -172,18 +172,5 @@ public class TicketDAO {
 		}
 		return false;
 
-	}
-
-	
-
-	public static Temporal getInTime() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static Temporal getOutTime() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

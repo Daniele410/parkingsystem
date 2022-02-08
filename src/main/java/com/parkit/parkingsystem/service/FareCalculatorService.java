@@ -12,6 +12,8 @@ import com.parkit.parkingsystem.model.Ticket;
  *
  */
 public class FareCalculatorService {
+	
+	private TicketDAO ticketDAO = new TicketDAO();
 
 	public void calculateFare(Ticket ticket) {
 		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
@@ -23,8 +25,11 @@ public class FareCalculatorService {
 		//double duration = Duration.between(ticket.getInTime(), ticket.getOutTime()).toMinutes();
 		//créer une méthode avec ce qui est écrit ligne 23
 		double duration = calculateTimeInParking(ticket);
+			
 		
 		//créer une méthode en utilisant ticketDAO.isReccuring pour savoir si la discount est de 1 ou 0.95
+		
+	
 		double discount = calculateDicount(ticket.getVehicleRegNumber());
 		// Durée mise à zéro si moins de 30 minutes
 		
@@ -50,12 +55,21 @@ public class FareCalculatorService {
 	}
 
 	private double calculateDicount(String vehicleRegNumber) {
-		Duration.between(TicketDAO.getOutTime(), TicketDAO.getOutTime()).toMinutes();
-		return 0;
+		//Je dois payer 100 € mais j'ai une réduction de 5%
+		//Je dois multiplier 100 par quel double pour arriver 95 ? C'est 0.95
+		
+		//SI utilisateur réccurent alors on retourn 0.95 sinon on retourne 1
+		
+		if (ticketDAO.isRecurring(vehicleRegNumber) ) {
+			return 0.95;
+		} else 
+			return 1;
+		
 	}
 
 	private double calculateTimeInParking(Ticket ticket) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return Duration.between(ticket.getInTime(), ticket.getOutTime()).toMinutes();
+
 	}
 }
