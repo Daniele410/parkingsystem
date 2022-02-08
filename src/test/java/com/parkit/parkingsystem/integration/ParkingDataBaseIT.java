@@ -91,7 +91,7 @@ public class ParkingDataBaseIT {
 		ticket.setVehicleRegNumber(VehiculeRegNumber);
 		ticket.setPrice(0);
 		ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
-		ticket.setOutTime(null);
+		ticket.setOutTime(ticket.getOutTime());
 		ticketDAO.saveTicket(ticket);
 		Mockito.when(ticketDAO.getTicket(toString())).thenReturn(ticket);
 		Mockito.when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);

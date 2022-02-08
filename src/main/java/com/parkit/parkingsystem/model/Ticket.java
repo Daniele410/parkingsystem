@@ -1,6 +1,7 @@
 package com.parkit.parkingsystem.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 
@@ -63,6 +64,16 @@ public class Ticket {
 
 	public void setOutTime(LocalDateTime outTime) {
 		this.outTime = outTime;
+	}
+
+	public void setInTime(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setOutTime(Date outTime2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
