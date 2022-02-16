@@ -44,7 +44,9 @@ public class ParkingService {
 				if (!isCarInside) {
 					// Sinon on sort de la méthode
 					if (ticketDAO.isRecurring(vehicleRegNumber)) {
-						System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+						System.out.println("");
+						System.out.println(
+								"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 					}
 					parkingSpot.setAvailable(false);
 					parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
@@ -58,7 +60,8 @@ public class ParkingService {
 					ticket.setVehicleRegNumber(vehicleRegNumber);
 					ticket.setPrice(0);
 					ticket.setInTime(inTime);
-					ticket.setOutTime(inTime);;
+					ticket.setOutTime(inTime);
+					;
 					ticketDAO.saveTicket(ticket);
 					System.out.println("Generated Ticket and saved in DB");
 					System.out.println("Please park your vehicle in spot number:" + parkingSpot.getId());
@@ -119,7 +122,7 @@ public class ParkingService {
 	public void processExitingVehicle() {
 		try {
 			String vehicleRegNumber = getVehichleRegNumber();
-			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber); //TODO vérifier si on prend le bon ticket
+			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber); // TODO vérifier si on prend le bon ticket
 			LocalDateTime outTime = LocalDateTime.now();
 			ticket.setOutTime(outTime);
 			fareCalculatorService.calculateFare(ticket);
@@ -137,8 +140,6 @@ public class ParkingService {
 		} catch (Exception e) {
 			logger.error("Unable to process exiting vehicle", e);
 		}
-		
-		
+
 	}
-	
 }

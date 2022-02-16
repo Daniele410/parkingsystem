@@ -3,12 +3,13 @@ package com.parkit.parkingsystem.integration;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -40,7 +41,7 @@ public class ParkingDataBaseIT {
 
 	@Mock
 	private static InputReaderUtil inputReaderUtil;
-	
+
 	@Mock
 	private static Ticket ticket;
 
@@ -65,6 +66,7 @@ public class ParkingDataBaseIT {
 
 	}
 
+	@DisplayName("Parking systeme save ticket to DB and Update parkingspot with avaibility")
 	@Test
 	public void testParkingACar() {
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
@@ -78,6 +80,7 @@ public class ParkingDataBaseIT {
 
 	}
 
+	@DisplayName("Parking systeme generated fare and out time saving to DB")
 	@Test
 	public void testParkingLotExit() {
 		testParkingACar();
@@ -90,7 +93,7 @@ public class ParkingDataBaseIT {
 		ticket.setParkingSpot(parkingSpot);
 		ticket.setVehicleRegNumber(VehiculeRegNumber);
 		ticket.setPrice(0);
-		ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
+		ticket.setInTime(LocalDateTime.now());
 		ticket.setOutTime(ticket.getOutTime());
 		ticketDAO.saveTicket(ticket);
 		Mockito.when(ticketDAO.getTicket(toString())).thenReturn(ticket);
@@ -112,7 +115,4 @@ public class ParkingDataBaseIT {
 		return null;
 	}
 
-
-	}
-
-
+}
