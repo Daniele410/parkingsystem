@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 /**
  * 
- * cette classe permet de stocker et de récupérer des valeurs dans la table des
+ * Cette classe permet de stocker et de récupérer des valeurs dans la table des
  * tickets à partir de la base de données
  *
  */

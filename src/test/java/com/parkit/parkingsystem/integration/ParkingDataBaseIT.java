@@ -57,7 +57,7 @@ public class ParkingDataBaseIT {
 	@BeforeEach
 	private void setUpPerTest() throws Exception {
 		when(inputReaderUtil.readSelection()).thenReturn(1);
-		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEFG");
 		dataBasePrepareService.clearDataBaseEntries();
 	}
 
@@ -94,7 +94,7 @@ public class ParkingDataBaseIT {
 		ticket.setVehicleRegNumber(VehiculeRegNumber);
 		ticket.setPrice(0);
 		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(ticket.getOutTime());
+		ticket.setOutTime(ticket.getOutTime().plusMinutes(60));
 		ticketDAO.saveTicket(ticket);
 		Mockito.when(ticketDAO.getTicket(toString())).thenReturn(ticket);
 		Mockito.when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
