@@ -2,7 +2,6 @@ package com.parkit.parkingsystem.integration;
 
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.AfterAll;
@@ -29,11 +28,10 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 @ExtendWith(MockitoExtension.class)
 public class ParkingDataBaseIT {
 
-	private static final String VehiculeRegNumber = "ABCDEFG";
+	private static final String VehiculeRegNumber = "ABCDEF";
 	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
 	private static DataBasePrepareService dataBasePrepareService;
 
-	@Mock
 	private static ParkingSpotDAO parkingSpotDAO;
 
 	@Mock
@@ -41,6 +39,9 @@ public class ParkingDataBaseIT {
 
 	@Mock
 	private static InputReaderUtil inputReaderUtil;
+
+	@Mock
+	private static ParkingSpot parkingSpot;
 
 	@Mock
 	private static Ticket ticket;
@@ -57,7 +58,7 @@ public class ParkingDataBaseIT {
 	@BeforeEach
 	private void setUpPerTest() throws Exception {
 		when(inputReaderUtil.readSelection()).thenReturn(1);
-		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEFG");
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 		dataBasePrepareService.clearDataBaseEntries();
 	}
 
@@ -97,22 +98,14 @@ public class ParkingDataBaseIT {
 		ticket.setOutTime(ticket.getOutTime().plusMinutes(60));
 		ticketDAO.saveTicket(ticket);
 		Mockito.when(ticketDAO.getTicket(toString())).thenReturn(ticket);
-		Mockito.when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-		Mockito.when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+		Mockito.when(ticketDAO.updateTicket(Mockito.any(Ticket.class))).thenReturn(true);
+		Mockito.when(parkingSpotDAO.updateParking(Mockito.any(ParkingSpot.class))).thenReturn(true);
 
 		ParkingService parkingServiceOut = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingServiceOut.processExitingVehicle();
 
 		Mockito.verify(parkingSpotDAO).updateParking(Mockito.any(ParkingSpot.class));
 		Assertions.assertEquals(1.5, ticket.getPrice());
-	}
-
-	private ParkingSpot any(Serializable class1) {
-		return null;
-	}
-
-	private Ticket any(Class<Ticket> class1) {
-		return null;
 	}
 
 }
