@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.integration;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -29,9 +30,14 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 public class ParkingDataBaseIT {
 
 	private static final String VehiculeRegNumber = "ABCDEF";
+
+	@Mock
 	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+
+	@Mock
 	private static DataBasePrepareService dataBasePrepareService;
 
+	@Mock
 	private static ParkingSpotDAO parkingSpotDAO;
 
 	@Mock
@@ -58,7 +64,7 @@ public class ParkingDataBaseIT {
 	@BeforeEach
 	private void setUpPerTest() throws Exception {
 		when(inputReaderUtil.readSelection()).thenReturn(1);
-		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(VehiculeRegNumber);
 		dataBasePrepareService.clearDataBaseEntries();
 	}
 
@@ -70,6 +76,7 @@ public class ParkingDataBaseIT {
 	@DisplayName("Parking systeme save ticket to DB and Update parkingspot with avaibility")
 	@Test
 	public void testParkingACar() {
+		// Given
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();
 		// TODO: check that a ticket is actualy saved in DB and Parking table is updated
@@ -84,7 +91,8 @@ public class ParkingDataBaseIT {
 	@DisplayName("Parking systeme generated fare and out time saving to DB")
 	@Test
 	public void testParkingLotExit() {
-		testParkingACar();
+
+		// Given
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		parkingService.processIncomingVehicle();
 		// TODO: check that the fare generated and out time are populated correctly in
@@ -93,12 +101,11 @@ public class ParkingDataBaseIT {
 		Ticket ticket = new Ticket();
 		ticket.setParkingSpot(parkingSpot);
 		ticket.setVehicleRegNumber(VehiculeRegNumber);
-		ticket.setPrice(0);
+		ticket.setPrice(1.5);
 		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(ticket.getOutTime().plusMinutes(60));
 		ticketDAO.saveTicket(ticket);
 		Mockito.when(ticketDAO.getTicket(toString())).thenReturn(ticket);
-		Mockito.when(ticketDAO.updateTicket(Mockito.any(Ticket.class))).thenReturn(true);
+		Mockito.when(ticketDAO.isRecurring(anyString())).thenReturn(false);
 		Mockito.when(parkingSpotDAO.updateParking(Mockito.any(ParkingSpot.class))).thenReturn(true);
 
 		ParkingService parkingServiceOut = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);

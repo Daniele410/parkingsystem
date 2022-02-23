@@ -38,19 +38,21 @@ public class ParkingServiceTest {
 	@BeforeEach
 	private void setUpPerTest() {
 		try {
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
+			// Given
+			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 			Ticket ticket = new Ticket();
 			ticket.setInTime(LocalDateTime.now());
 			ticket.setParkingSpot(parkingSpot);
 			ticket.setVehicleRegNumber("ABCDEF");
-			when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
+
+			// When
 			when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
-
 			when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
-
 			parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
+			// Then
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Failed to set up test mock objects");
@@ -60,6 +62,8 @@ public class ParkingServiceTest {
 	@Test
 	public void processIncomingVehicleTest() {
 		try {
+
+			// Given
 			when(inputReaderUtil.readSelection()).thenReturn(1);
 			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -67,10 +71,14 @@ public class ParkingServiceTest {
 			ticket.setInTime(LocalDateTime.now());
 			ticket.setParkingSpot(parkingSpot);
 			ticket.setVehicleRegNumber("ABCDEF");
+
+			// When
 			when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 			parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 			ParkingType car = ParkingType.CAR;
 			when(parkingSpotDAO.getNextAvailableSlot(car)).thenReturn(2);
+
+			// Then
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Failed to set up test mock objects");
