@@ -40,6 +40,7 @@ public class FareCalculatorServiceTest {
 
 	@Test
 	public void calculateFareCar() {
+
 		// Given
 		when(ticketDAO.isRecurring(anyString())).thenReturn(false);
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
@@ -48,8 +49,10 @@ public class FareCalculatorServiceTest {
 		ticket.setVehicleRegNumber("TOTO");
 		ticket.setOutTime(LocalDateTime.now().plusDays(1));
 		ticket.setParkingSpot(parkingSpot);
+
 		// When
 		fareCalculatorService.calculateFare(ticket);
+
 		// Then
 		assertEquals(ticket.getPrice(), ticket.getPrice());
 	}
