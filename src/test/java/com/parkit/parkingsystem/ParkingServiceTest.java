@@ -80,20 +80,28 @@ public class ParkingServiceTest {
 
 	@Test
 	public void processIncomingVehicleTestWhenInvokePrintln() {
-		// Given
-		when(ticketDAO.isRecurring(anyString())).thenReturn(true);
-		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-		ticket.setInTime(LocalDateTime.now());
-		ticket.setVehicleRegNumber("TOTO");
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
-		ticket.setParkingSpot(parkingSpot);
 
-		// When
-		fareCalculatorService.calculateFare(ticket);
-		// Then
-		assertEquals("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.",
-				outputStreamCaptor.toString()
-						.trim());
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setVehicleRegNumber("ABCDEF");
+		if (parkingSpot != null && parkingSpot.getId() > 0) {
+			String vehicleRegNumber = anyString();
+			// Vérifier si la voiture est déjà présente dans le parking
+			// SI elle n'est pas présente on continue
+			boolean isCarInside = ticketDAO.isCarInside(vehicleRegNumber);
+			if (!isCarInside) {
+				// Sinon on sort de la méthode
+				if (ticketDAO.isRecurring(vehicleRegNumber)) {
+					System.out.println(
+							"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+					// Then
+					assertEquals(
+							"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.",
+							outputStreamCaptor);
+				}
+			}
+		}
 	}
 
 	@Test
@@ -150,6 +158,7 @@ public class ParkingServiceTest {
 		ticket.setVehicleRegNumber("ABCDEF");
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 
+		// Then
 		assertEquals(ParkingType.BIKE, parkingService.getVehichleType());
 	}
 

@@ -50,6 +50,7 @@ public class ParkingDataBaseIT {
 
 	@BeforeAll
 	private static void setUp() throws Exception {
+		System.out.println("BEFORE ALL");
 		parkingSpotDAO = new ParkingSpotDAO();
 		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
 		ticketDAO = new TicketDAO();
@@ -60,6 +61,7 @@ public class ParkingDataBaseIT {
 
 	@BeforeEach
 	private void setUpPerTest() throws Exception {
+		System.out.println("BEFORE EACH");
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 
 		when(inputReaderUtil.readSelection()).thenReturn(1);
@@ -69,7 +71,7 @@ public class ParkingDataBaseIT {
 
 	@AfterAll
 	private static void tearDown() {
-
+		System.out.println("AFTER ALL");
 	}
 
 	@DisplayName("Parking system save ticket to DB and Update parkingspot with avaibility")
@@ -105,14 +107,15 @@ public class ParkingDataBaseIT {
 	@Test
 	public void testParkingLotExitBike() {
 
+		// Given
 		parkingService.processIncomingVehicle();
-
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
-
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
 		// TODO: check that the fare generated and out time are populated correctly in
 		// the database
+
+		// When
 		parkingService.processExitingVehicle();
 		assertNotNull(ticket.getPrice());
 		assertNotNull(ticket.getOutTime());
@@ -141,5 +144,24 @@ public class ParkingDataBaseIT {
 
 		// TODO
 		// test voiture qui sort et parking gratuit <30 minutes
+	}
+
+	@Test
+	public void testFreeParkingLotExitWhitDiscount() {
+
+		// Given
+		parkingService.processIncomingVehicle();
+		new ParkingSpot(1, ParkingType.BIKE, false);
+		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(25));
+		parkingService.processExitingVehicle();
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals(ticket.getPrice(), ticket.getPrice());
+
 	}
 }
