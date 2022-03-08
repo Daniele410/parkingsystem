@@ -54,7 +54,7 @@ public class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals(ticket.getPrice(), ticket.getPrice());
+		assertEquals(60 * 24 * Fare.CAR_RATE_PER_MINUTE, ticket.getPrice());
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals(ticket.getPrice(), ticket.getPrice());
+		assertEquals(60 * 24 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
 	}
 
 	@Test
@@ -176,7 +176,7 @@ public class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice() * 0);
+		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
 	}
 
 	@Test

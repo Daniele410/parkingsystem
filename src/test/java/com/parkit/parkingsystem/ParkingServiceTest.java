@@ -66,7 +66,6 @@ public class ParkingServiceTest {
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setParkingSpot(parkingSpot);
 		ticket.setVehicleRegNumber("ABCDEF");
-
 		when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		ParkingType car = ParkingType.CAR;
@@ -111,8 +110,6 @@ public class ParkingServiceTest {
 		ParkingType parkingType = ParkingType.CAR;
 		ParkingSpot parkingSpot = new ParkingSpot(1, parkingType, true);
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-
-		// When
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(parkingSpotDAO.getNextAvailableSlot(parkingType)).thenReturn(1);
 

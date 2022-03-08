@@ -10,12 +10,14 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -146,6 +148,7 @@ public class ParkingDataBaseIT {
 		// test voiture qui sort et parking gratuit <30 minutes
 	}
 
+	@Disabled
 	@Test
 	public void testFreeParkingLotExitWhitDiscount() {
 
@@ -154,14 +157,14 @@ public class ParkingDataBaseIT {
 		new ParkingSpot(1, ParkingType.BIKE, false);
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(25));
-		parkingService.processExitingVehicle();
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		when(inputReaderUtil.readSelection()).thenReturn(1);
 
 		// When
-		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals(ticket.getPrice(), ticket.getPrice());
+
+		assertEquals(ticketDAO.getTicket(VehiculeRegNumber.toString()).getPrice(), Fare.BIKE_RATE_PER_MINUTE);
 
 	}
 }
