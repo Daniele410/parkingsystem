@@ -33,27 +33,27 @@ public class ParkingSpotDAOTest {
 	static Connection con;
 
 	@BeforeAll
-	static void setUp_testEnvironment() throws Exception {
-
+	static void setUpTestEnvironment() throws Exception {
+		// Given
 		con = databaseTestConfig.getConnection();
-		LOGGER.info("Test environment database has been set up");
+		LOGGER.info("Test environment database set up");
 
-		// Initialize our DAO with test environment
+		// When
 		parkingSpotDAO = new ParkingSpotDAO();
 		parkingSpotDAO.dataBaseConfig = databaseTestConfig;
 
-		// Clearing previous tested entries
+		// Then
 		dataBasePrepareService = new DataBasePrepareService();
 		dataBasePrepareService.clearDataBaseEntries();
 	}
 
 	@AfterAll
-	static void tearDown_testEnvironment() throws Exception {
+	static void tearDownTestEnvironment() throws Exception {
 		con.close();
 	}
 
 	@Test
-	public void getNextAvailableSlot_shouldReturnInteger_slotNumberOne() throws Exception {
+	public void getNextAvailableSlotShouldReturnIntegerSlotNumberOne() throws Exception {
 		// Given
 		ParkingSpot parkingSpot = new ParkingSpot(0, ParkingType.CAR, true);
 		int expectedValue = 1;
@@ -66,7 +66,7 @@ public class ParkingSpotDAOTest {
 	}
 
 	@Test
-	void updateParking_shouldReturnTrue() throws Exception {
+	void updateParkingShouldReturnTrue() throws Exception {
 		// Given
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 		parkingSpot.setAvailable(true);
@@ -80,7 +80,7 @@ public class ParkingSpotDAOTest {
 	}
 
 	@Test
-	void trueAssumption() {
+	public void trueAssumption() {
 		assumeTrue(5 > 1);
 		assertEquals(5 + 2, 7);
 	}

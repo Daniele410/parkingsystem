@@ -13,9 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.DBConstants;
@@ -25,17 +22,14 @@ import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 
-@ExtendWith(MockitoExtension.class)
 public class TicketDAOTest {
 
-	TicketDAO ticketDAO = new TicketDAO();
+	TicketDAO ticketDAO;
 
-	Ticket ticket = new Ticket();
+	Ticket ticket;
 
-	@Mock
-	Logger logger = LogManager.getLogger("TicketDAO");
+	Logger logger = LogManager.getLogger(TicketDAOTest.class);
 
-	@Mock
 	DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
 	private static DataBasePrepareService dataBasePrepareService;
@@ -43,32 +37,23 @@ public class TicketDAOTest {
 	Connection con;
 
 	String vehicleRegNumber = "qwerty";
+	String vehicleNotRegNumber = "ABCDEF";
 
 	@BeforeAll
 	void setUp() throws Exception, SQLException {
 
-		Connection con;
-		PreparedStatement ps;
-
 		con = dataBaseConfig.getConnection();
 		logger.info("Test environment database has been set up");
-
 		ticketDAO = new TicketDAO();
 		ticketDAO.dataBaseConfig = dataBaseConfig;
-
-		// Clearing previous tested entries
 		dataBasePrepareService = new DataBasePrepareService();
 		dataBasePrepareService.clearDataBaseEntries();
 
-		// CREATING TEST ENTRIES IN DATABASE
-		con = dataBaseConfig.getConnection();
-		ps = con.prepareStatement(DBConstants.GET_TICKET);
-
-		// Query : Save a ticket in database to check if vehicle is regular or not
+		PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
 		ps.setInt(1, ticket.getParkingSpot().getId());
-		ps.setString(1, ticket.getVehicleRegNumber());
+		ps.setString(2, ticket.getVehicleRegNumber());
 		ps.setDouble(3, ticket.getPrice());
-		ps.setTimestamp(4, Timestamp.valueOf(ticket.toString()));
+		ps.setTimestamp(4, Timestamp.valueOf(ticket.getInTime()));
 		ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (Timestamp.valueOf(ticket.getOutTime())));
 		ps.execute();
 
@@ -77,6 +62,18 @@ public class TicketDAOTest {
 	@AfterAll
 	void tearDown() throws Exception {
 		con.close();
+	}
+
+	@Test
+	public void checkIfVehicleIsRegularShouldReturnFalse() throws Exception {
+		// Given
+		boolean expectedValue = false;
+
+		// When
+		boolean actualValue = ticketDAO.isRecurring(vehicleRegNumber);
+
+		// Then
+		assertEquals(expectedValue, actualValue);
 	}
 
 	@Test
@@ -105,7 +102,7 @@ public class TicketDAOTest {
 	}
 
 	@Test
-	public void saveTicket_shouldReturnTrue() throws Exception {
+	public void saveTicketShouldReturnTrue() throws Exception {
 		// ARRANGE
 
 		boolean expectedValue = false;
@@ -130,7 +127,7 @@ public class TicketDAOTest {
 
 	}
 
-	public void updateTicket_shouldReturnTrue() throws Exception {
+	public void updateTicketShouldReturnTrue() throws Exception {
 
 		// ARRANGE
 		Ticket ticket = new Ticket();
