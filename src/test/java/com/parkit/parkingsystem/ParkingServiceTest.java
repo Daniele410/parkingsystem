@@ -1,8 +1,11 @@
 package com.parkit.parkingsystem;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +77,7 @@ public class ParkingServiceTest {
 		// When
 		parkingService.processIncomingVehicle();
 		// Then
-		verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+		verify(parkingSpotDAO, Mockito.times(2)).updateParking(any(ParkingSpot.class));
 	}
 
 	@Test
@@ -157,6 +160,47 @@ public class ParkingServiceTest {
 
 		// Then
 		assertEquals(ParkingType.BIKE, parkingService.getVehichleType());
+	}
+
+	@Test
+	public void getNextParkingButParkingIsFull() throws Exception {
+		// Arrange
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(0);
+
+		// Act
+		ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
+
+		// Assert
+		verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
+		assertNull(parkingSpot);
+	}
+
+	@Test
+	public void getVehicleTypeButIllegalArgumentExceptionIsThrown() {
+
+		// Arrange
+		when(inputReaderUtil.readSelection()).thenReturn(3);
+
+		// Assert
+		assertThrows(IllegalArgumentException.class, () -> parkingService.getVehichleType());
+	}
+
+	@Test
+	public void processExitingVehicleWithGoodTicket() throws Exception {
+
+		// Arrange
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setParkingSpot(parkingSpot);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
+		when(ticketDAO.updateTicket(ticket)).thenReturn(true);
+
+		// Act
+		parkingService.processExitingVehicle();
+
+		// Assert
+		verify(parkingSpotDAO).updateParking(parkingSpot);
 	}
 
 }

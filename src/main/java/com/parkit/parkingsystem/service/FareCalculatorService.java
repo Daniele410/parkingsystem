@@ -20,19 +20,10 @@ public class FareCalculatorService {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 		}
 
-		// TODO: Some tests are failing here. Need to check if this logic is correct
-		// double duration = outHour - inHour;
-		// double duration = Duration.between(ticket.getInTime(),
-		// ticket.getOutTime()).toMinutes();
-		// créer une méthode avec ce qui est écrit ligne 23
 		double duration = calculateTimeInParking(ticket);
-
-		// créer une méthode en utilisant ticketDAO.isReccuring pour savoir si la
-		// discount est de 1 ou 0.95
-
 		double discount = calculateDicount(ticket.getVehicleRegNumber());
-		// Durée mise à zéro si moins de 30 minutes
 
+		// Durée mise à zéro si moins de 30 minutes
 		if (duration < 30) {
 			duration = 0;
 		}
@@ -54,11 +45,8 @@ public class FareCalculatorService {
 	}
 
 	private double calculateDicount(String vehicleRegNumber) {
-		// Je dois payer 100 € mais j'ai une réduction de 5%
-		// Je dois multiplier 100 par quel double pour arriver 95 ? C'est 0.95
 
-		// SI utilisateur réccurent alors on retourn 0.95 sinon on retourne 1
-
+		// Si utilisateur réccurent alors on retourn 0.95 sinon on retourne 1
 		if (ticketDAO.isRecurring(vehicleRegNumber)) {
 			return 0.95;
 		} else
@@ -69,6 +57,5 @@ public class FareCalculatorService {
 	private double calculateTimeInParking(Ticket ticket) {
 
 		return Duration.between(ticket.getInTime(), ticket.getOutTime()).toMinutes();
-
 	}
 }

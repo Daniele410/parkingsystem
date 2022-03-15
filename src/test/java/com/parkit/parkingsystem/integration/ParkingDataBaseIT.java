@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,31 +123,28 @@ public class ParkingDataBaseIT {
 
 	}
 
-	// TODO
-	// Test voiture qui sort utilisateur récurrent donc discount 5%
-
 	@Test
 	public void testParkingLotExitWhitDiscount() {
 
 		// Given
+
 		parkingService.processIncomingVehicle();
 		new ParkingSpot(1, ParkingType.BIKE, false);
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
 		parkingService.processExitingVehicle();
 
 		// When
-		fareCalculatorService.calculateFare(ticket);
+//		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals(ticket.getPrice(), ticket.getPrice());
+		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
 
 		// TODO
 		// test voiture qui sort et parking gratuit <30 minutes
 	}
 
-	@Disabled
 	@Test
 	public void testFreeParkingLotExitWhitDiscount() {
 
@@ -157,14 +153,13 @@ public class ParkingDataBaseIT {
 		new ParkingSpot(1, ParkingType.BIKE, false);
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
-		when(inputReaderUtil.readSelection()).thenReturn(1);
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
 
 		// When
+		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-
-		assertEquals(ticketDAO.getTicket(VehiculeRegNumber.toString()).getPrice(), Fare.BIKE_RATE_PER_MINUTE);
+		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
 
 	}
 }
