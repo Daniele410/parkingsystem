@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.DBConstants;
@@ -22,6 +24,7 @@ import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 
+@ExtendWith(MockitoExtension.class)
 public class TicketDAOTest {
 
 	TicketDAO ticketDAO;
@@ -41,7 +44,7 @@ public class TicketDAOTest {
 
 	@BeforeAll
 	void setUp() throws Exception, SQLException {
-
+		System.out.println("BEFORE ALL");
 		con = dataBaseConfig.getConnection();
 		logger.info("Test environment database has been set up");
 		ticketDAO = new TicketDAO();
@@ -50,9 +53,9 @@ public class TicketDAOTest {
 		dataBasePrepareService.clearDataBaseEntries();
 
 		PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
-		ps.setInt(1, ticket.getParkingSpot().getId());
-		ps.setString(2, ticket.getVehicleRegNumber());
-		ps.setDouble(3, ticket.getPrice());
+		ps.setInt(1, 1);
+		ps.setString(2, vehicleRegNumber);
+		ps.setDouble(3, 1.0);
 		ps.setTimestamp(4, Timestamp.valueOf(ticket.getInTime()));
 		ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (Timestamp.valueOf(ticket.getOutTime())));
 		ps.execute();
@@ -103,12 +106,11 @@ public class TicketDAOTest {
 
 	@Test
 	public void saveTicketShouldReturnTrue() throws Exception {
-		// ARRANGE
 
+		// Given
 		boolean expectedValue = false;
 		Ticket ticket = new Ticket();
 		ticket.setInTime(LocalDateTime.now());
-
 		ParkingSpot parkingSpot = new ParkingSpot(2, ParkingType.CAR, true);
 		ticket.setParkingSpot(parkingSpot);
 		ticket.setVehicleRegNumber(vehicleRegNumber);
@@ -116,12 +118,11 @@ public class TicketDAOTest {
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setOutTime(null);
 
-		// ACT
-
+		// When
 		ticketDAO.saveTicket(ticket);
 		String actualPlate = ticketDAO.getTicket(vehicleRegNumber).getVehicleRegNumber();
 
-		// ASSERT
+		// Then
 		assertEquals(expectedValue, actualPlate);
 		assertEquals(vehicleRegNumber, actualPlate);
 
@@ -129,15 +130,15 @@ public class TicketDAOTest {
 
 	public void updateTicketShouldReturnTrue() throws Exception {
 
-		// ARRANGE
+		// Given
 		Ticket ticket = new Ticket();
 		ticket = ticketDAO.getTicket(vehicleRegNumber);
 		boolean expectedValue = true;
 
-		// ACT
+		// When
 		boolean actualValue = ticketDAO.updateTicket(ticket);
 
-		// ASSERT
+		// Then
 		assertEquals(expectedValue, actualValue);
 
 	}

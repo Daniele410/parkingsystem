@@ -88,7 +88,6 @@ public class ParkingDataBaseIT {
 
 	}
 
-	@DisplayName("Parking system generated fare and out time saving to DB")
 	@Test
 	public void testParkingLotExit() {
 

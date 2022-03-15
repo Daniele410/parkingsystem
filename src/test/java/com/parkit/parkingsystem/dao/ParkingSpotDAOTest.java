@@ -37,13 +37,15 @@ public class ParkingSpotDAOTest {
 		// Given
 		con = databaseTestConfig.getConnection();
 		LOGGER.info("Test environment database set up");
+		parkingSpotDAO = new ParkingSpotDAO();
+		dataBasePrepareService = new DataBasePrepareService();
 
 		// When
-		parkingSpotDAO = new ParkingSpotDAO();
+
 		parkingSpotDAO.dataBaseConfig = databaseTestConfig;
 
 		// Then
-		dataBasePrepareService = new DataBasePrepareService();
+
 		dataBasePrepareService.clearDataBaseEntries();
 	}
 
