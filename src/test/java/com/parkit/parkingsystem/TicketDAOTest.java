@@ -1,28 +1,33 @@
 package com.parkit.parkingsystem;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.TicketDAO;
-import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
+import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
+
+import nl.altindag.log.LogCaptor;
 
 @ExtendWith(MockitoExtension.class)
 public class TicketDAOTest {
@@ -33,38 +38,55 @@ public class TicketDAOTest {
 
 	Logger logger = LogManager.getLogger(TicketDAOTest.class);
 
-	DataBaseConfig dataBaseConfig = new DataBaseConfig();
+	private static LogCaptor logcaptor;
 
-	private static DataBasePrepareService dataBasePrepareService;
+	@Mock
+	private Connection con;
 
-	Connection con;
+	@Mock
+	private PreparedStatement ps;
+
+	@Mock
+	private ResultSet rs;
+
+	@Mock
+	private DataBaseTestConfig databaseConfig;
 
 	String vehicleRegNumber = "qwerty";
 	String vehicleNotRegNumber = "ABCDEF";
 
-	@BeforeAll
-	void setUp() throws Exception, SQLException {
-		System.out.println("BEFORE ALL");
-		con = dataBaseConfig.getConnection();
-		logger.info("Test environment database has been set up");
+	@BeforeEach
+	void setUp() throws SQLException, ClassNotFoundException {
+		ticket = new Ticket();
 		ticketDAO = new TicketDAO();
-		ticketDAO.dataBaseConfig = dataBaseConfig;
-		dataBasePrepareService = new DataBasePrepareService();
-		dataBasePrepareService.clearDataBaseEntries();
+		ticketDAO.dataBaseConfig = databaseConfig;
 
-		PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
-		ps.setInt(1, 1);
-		ps.setString(2, vehicleRegNumber);
-		ps.setDouble(3, 1.0);
-		ps.setTimestamp(4, Timestamp.valueOf(ticket.getInTime()));
-		ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (Timestamp.valueOf(ticket.getOutTime())));
-		ps.execute();
+		ticket.setId(3);
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
+		ticket.setPrice(1.5);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(null);
 
+		logcaptor = LogCaptor.forName("TicketDAO");
+		logcaptor.setLogLevelToInfo();
+
+		when(databaseConfig.getConnection()).thenReturn(con);
 	}
 
-	@AfterAll
-	void tearDown() throws Exception {
-		con.close();
+	@Test
+	public void saveTicket_withExceptionShouldReturnFalse() throws Exception {
+		// Given
+		ticket.setVehicleRegNumber(null);
+		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
+		doThrow(SQLException.class).when(ps).setString(2, ticket.getVehicleRegNumber());
+
+		// When
+		boolean result = ticketDAO.saveTicket(ticket);
+
+		// Then
+		assertThat(logcaptor.getErrorLogs()).contains("Error fetching next available slot");
+		assertFalse(result);
 	}
 
 	@Test
@@ -92,7 +114,7 @@ public class TicketDAOTest {
 	}
 
 	@Test
-	void checkIfVehicleIsRecurringTrue() throws Exception {
+	public void checkIfVehicleIsRecurringTrue() throws Exception {
 		// Given
 		boolean expectedValue = true;
 
@@ -128,6 +150,7 @@ public class TicketDAOTest {
 
 	}
 
+	@Test
 	public void updateTicketShouldReturnTrue() throws Exception {
 
 		// Given
@@ -141,5 +164,34 @@ public class TicketDAOTest {
 		// Then
 		assertEquals(expectedValue, actualValue);
 
+	}
+
+	public class checkVehicleWhenEnteringOrExiting {
+
+		@Test
+
+		public void checkAlreadyOutShouldReturnTrue() throws Exception {
+			// Given
+			boolean expectedValue = true;
+
+			// When
+			boolean actualValue = ticketDAO.isRecurring(vehicleRegNumber);
+
+			// Then
+			assertEquals(expectedValue, actualValue);
+		}
+
+		@Test
+
+		public void checkAlreadyInShouldReturnTrue() throws Exception {
+			// Given
+			boolean expectedValue = true;
+
+			// When
+			boolean actualValue = ticketDAO.isCarInside(vehicleNotRegNumber);
+
+			// Then
+			assertEquals(expectedValue, actualValue);
+		}
 	}
 }
