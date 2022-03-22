@@ -128,7 +128,7 @@ public class ParkingService {
 	public void processExitingVehicle() {
 		try {
 			String vehicleRegNumber = getVehichleRegNumber();
-			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber); // TODO vérifier si on prend le bon ticket
+			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber); 
 			LocalDateTime outTime = LocalDateTime.now();
 			if (ticket == null) {
 				System.out.println("Error any vehicle found with number : " + vehicleRegNumber);

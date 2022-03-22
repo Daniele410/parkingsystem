@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,13 +88,13 @@ public class ParkingDataBaseIT {
 
 	}
 
-	@Disabled
+	
 	@Test
 	public void testParkingLotExit() {
 
 		// Given
 		parkingService.processIncomingVehicle();
-		// TODO: check that the fare generated and out time are populated correctly in
+
 
 		// When
 		parkingService.processExitingVehicle();
@@ -114,8 +113,7 @@ public class ParkingDataBaseIT {
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
-		// TODO: check that the fare generated and out time are populated correctly in
-		// the database
+		
 
 		// When
 		parkingService.processExitingVehicle();
@@ -137,13 +135,12 @@ public class ParkingDataBaseIT {
 		parkingService.processExitingVehicle();
 
 		// When
-//		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket);
 
 		// Then
 		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
 
-		// TODO
-		// test voiture qui sort et parking gratuit <30 minutes
+		
 	}
 
 	@Test
