@@ -251,4 +251,24 @@ public class FareCalculatorServiceTest {
 		assertEquals((35 * Fare.BIKE_RATE_PER_MINUTE * 0.95), ticket.getPrice());
 	}
 
+	@Test
+	public void calculateFareCarGotTimeNull() throws Exception {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setVehicleRegNumber("TOTO");
+		ticket.setOutTime(null);
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+
+		boolean result = ticketDAO.deleteTicket(ticket);
+
+		// Then
+		assertEquals(false, result);
+	}
+
 }

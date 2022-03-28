@@ -39,7 +39,7 @@ public class ParkingService {
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
 				String vehicleRegNumber = getVehichleRegNumber();
 				if (ticketDAO.getTicket(vehicleRegNumber) != null) {
-					System.out.println("Error vehicle already parked");
+					logger.error("Error vehicle already parked");
 					return;
 				}
 				parkingSpot.setAvailable(false);
@@ -51,7 +51,7 @@ public class ParkingService {
 					// Sinon on sort de la méthode
 					if (ticketDAO.isRecurring(vehicleRegNumber)) {
 						System.out.println("");
-						System.out.println(
+						logger.error(
 								"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 					}
 					parkingSpot.setAvailable(false);
@@ -145,7 +145,7 @@ public class ParkingService {
 				System.out.println("Please pay the parking fare:" + ticket.getPrice());
 				System.out.println(
 						"Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is: " + outTime);
-				ticketDAO.deleteTicket(ticket);
+				ticketDAO.updateTicket(ticket);
 			} else {
 				System.out.println("Unable to update ticket information. Error occurred");
 			}

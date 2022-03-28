@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,10 +29,14 @@ import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 
+import nl.altindag.log.LogCaptor;
+
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
 	private static ParkingService parkingService;
+	
+	private static LogCaptor logcaptor;
 
 	@Mock
 	private static InputReaderUtil inputReaderUtil;
@@ -57,6 +62,8 @@ public class ParkingServiceTest {
 		ticket = ticketTest;
 
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		logcaptor = LogCaptor.forName("TicketDAO");
+		logcaptor.setLogLevelToInfo();
 
 	}
 
@@ -139,9 +146,23 @@ public class ParkingServiceTest {
 		when(ticketDAO.getTicket(toString())).thenReturn(ticket);
 		when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
 		when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
-
+		
 		parkingService.processExitingVehicle();
+		
+		
+		
 
+	}
+	
+	@Test
+	public void processExitingVehicleTicketNullTest() {
+		when(ticketDAO.getTicket(toString())).thenReturn(null);
+		when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
+		
+		assertThrows(Exception.class, () -> parkingService.processExitingVehicle());
+		
+		assertThat(logcaptor.getErrorLogs()).contains("Unable to process exiting vehicle");
+		
 	}
 
 	@Test
@@ -201,6 +222,112 @@ public class ParkingServiceTest {
 
 		// Assert
 		verify(parkingSpotDAO).updateParking(parkingSpot);
+	}
+	
+	@Test
+	public void processIncomingVehicleTestLogCaptor() throws Exception {
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setVehicleRegNumber("ABCDEF");
+		when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		when(ticketDAO.getTicket("ABCDEF")).thenReturn(null);
+	
+
+		// When
+		parkingService.processIncomingVehicle();
+		// Then
+		assertThat(logcaptor.getErrorLogs()).contains("Error fetching next available parking slot");
+	}
+	
+	@Test
+	public void processIncomingVehicleTestLogCaptorFalse() throws Exception {
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(null);
+		ticket.setId(1);
+		ticket.setVehicleRegNumber(null);
+		when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(false);
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		when(ticketDAO.getTicket("ABCDEF")).thenReturn(null);
+	
+
+		// When
+		parkingService.processIncomingVehicle();
+		// Then
+		assertThat(logcaptor.getErrorLogs()).contains("Error fetching next available parking slot");
+	}
+	
+	@Test
+	public void getVehichleRegNumberLogCaptorReturn() throws Exception {
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setVehicleRegNumber("ABCDEF");
+		when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
+	
+
+		// When
+		parkingService.processIncomingVehicle();
+		// Then
+		assertThat(logcaptor.getErrorLogs()).contains("Error fetching next available parking slot");
+	}
+	
+	@Test
+	public void processExitingVehicleTestLogCaptor() throws Exception {
+
+		// Arrange
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setParkingSpot(parkingSpot);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
+		when(ticketDAO.updateTicket(ticket)).thenReturn(false);
+		
+		// Act
+		parkingService.processExitingVehicle();
+
+		// Assert
+		if (ticketDAO.updateTicket(ticket)) {
+			System.out.println(
+					"Unable to update ticket information. Error occurred");
+			// Then
+			assertEquals(
+					"Unable to update ticket information. Error occurred",
+					outputStreamCaptor);
+		}
+	}
+	
+	public void processExitingVehicleTicketNullTestLogCaptor() throws Exception {
+
+		// Arrange
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setParkingSpot(parkingSpot);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
+		when(ticketDAO.updateTicket(ticket)).thenReturn(false);
+		
+		// Act
+		parkingService.processExitingVehicle();
+
+		// Assert
+		if (ticket == null) {
+			System.out.println("Error any vehicle found with number : " );
+			// Then
+			assertEquals(
+					"Unable to update ticket information. Error occurred",
+					outputStreamCaptor);
+		}
 	}
 
 }
