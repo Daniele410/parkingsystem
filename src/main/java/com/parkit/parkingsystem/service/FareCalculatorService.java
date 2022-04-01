@@ -44,7 +44,7 @@ public class FareCalculatorService {
 
 	}
 
-	private double calculateDicount(String vehicleRegNumber) {
+	public double calculateDicount(String vehicleRegNumber) {
 
 		// Si utilisateur réccurent alors on retourn 0.95 sinon on retourne 1
 		if (ticketDAO.isRecurring(vehicleRegNumber)) {

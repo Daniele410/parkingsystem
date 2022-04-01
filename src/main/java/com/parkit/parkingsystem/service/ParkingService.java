@@ -73,7 +73,7 @@ public class ParkingService {
 					System.out.println("Please park your vehicle in spot number:" + parkingSpot.getId());
 					System.out.println("Recorded in-time for vehicle number:" + vehicleRegNumber + " is:" + inTime);
 				} else {
-					System.out.println(
+					logger.info(
 							"Car Already Inside please exit your car or select another vehicule registration number");
 				}
 			}
@@ -131,7 +131,7 @@ public class ParkingService {
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber); 
 			LocalDateTime outTime = LocalDateTime.now();
 			if (ticket == null) {
-				System.out.println("Error any vehicle found with number : " + vehicleRegNumber);
+				logger.error("Error any vehicle found with number : " + vehicleRegNumber);
 				return;
 			}
 
@@ -147,7 +147,7 @@ public class ParkingService {
 						"Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is: " + outTime);
 				ticketDAO.updateTicket(ticket);
 			} else {
-				System.out.println("Unable to update ticket information. Error occurred");
+				logger.error("Unable to update ticket information. Error occurred");
 			}
 		} catch (Exception e) {
 			logger.error("Unable to process exiting vehicle", e);
