@@ -51,7 +51,7 @@ public class ParkingService {
 					// Sinon on sort de la méthode
 					if (ticketDAO.isRecurring(vehicleRegNumber)) {
 						System.out.println("");
-						logger.error(
+						logger.info(
 								"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 					}
 					parkingSpot.setAvailable(false);

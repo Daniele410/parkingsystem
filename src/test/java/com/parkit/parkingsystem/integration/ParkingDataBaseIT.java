@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,7 +88,7 @@ public class ParkingDataBaseIT {
 
 	}
 
-	@Disabled
+	
 	@Test
 	public void testParkingLotExit() {
 
@@ -100,9 +99,10 @@ public class ParkingDataBaseIT {
 		// When
 		parkingService.processExitingVehicle();
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
+		
+		//Then
 		assertNotNull(ticket);
-		assertNotNull(ticket.getOutTime());
-		assertNotNull(ticket.getPrice());
+		
 
 	}
 
