@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -78,28 +77,8 @@ public class TicketDAOTest {
 		when(databaseConfig.getConnection()).thenReturn(con);
 	}
 	
-	@Disabled
-	@Test
-	public void saveTicketTest() throws SQLException {
-		//Given
-		ticket.setVehicleRegNumber(vehicleRegNumber);
-		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
-		when(ps.executeQuery()).thenReturn(rs);
-		when(rs.getInt(1)).thenReturn(1);
-		when(rs.getString(anyInt())).thenReturn("CAR");
-		when(rs.getDouble(3)).thenReturn(1.5);
-		when(rs.getTimestamp(4)).thenReturn(new Timestamp(1));
-		when(rs.getTimestamp(5)).thenReturn(new Timestamp(2));
-		when(rs.next()).thenReturn(true);
-		
-		//When
-		boolean result = ticketDAO.saveTicket(ticket);
-
-		// Then
-		assertFalse(result);
-		
-		
-	}
+	
+	
 
 
 	@Test
@@ -139,16 +118,22 @@ public class TicketDAOTest {
 		assertEquals(result, false);
 	}
 
+	
 	@Test
-	public void checkIfVehicleIsRegularShouldReturnFalse() throws Exception {
-		// Given
-		boolean expectedValue = false;
+	public void saveTicketTest() throws SQLException {
+		//Given
+		
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
+		ticket.setOutTime(LocalDateTime.now());
 
-		// When
-		boolean actualValue = ticketDAO.isRecurring(vehicleRegNumber);
+		//When
+		boolean result = ticketDAO.saveTicket(ticket);
 
 		// Then
-		assertEquals(expectedValue, actualValue);
+		assertFalse(result);
+		
+		
 	}
 
 	@Test
@@ -162,6 +147,27 @@ public class TicketDAOTest {
 		// Then
 		assertEquals(expectedValue, actualValue);
 	}
+	
+//	@Test
+//	public void checkIfVehicleGetTicketFalse() throws Exception {
+//		// Given
+//		ticket.setVehicleRegNumber(vehicleRegNumber);
+//		when(con.prepareStatement(DBConstants.GET_TICKET)).thenReturn(ps);
+//		when(ps.executeQuery()).thenReturn(rs);
+//		when(rs.next()).thenReturn(true);
+//		when(rs.getInt(1)).thenReturn(1);
+//		when(rs.getString(anyInt())).thenReturn("CAR");
+//		when(rs.getDouble(3)).thenReturn(1.5);
+//		doNothing().when(ps).setTimestamp(5, null);
+//		
+//		boolean expectedValue = true;
+//
+//		// When
+//		boolean = "ticketDAO.getTicket(vehicleRegNumber)" != null;
+//
+//		// Then
+//		AssertionError(String.valueOf());
+//	}
 
 	@Test
 	public void getTicketCar_withExceptionShouldReturnTrue() throws Exception {
@@ -175,6 +181,25 @@ public class TicketDAOTest {
 		when(rs.getString(anyInt())).thenReturn("CAR");
 		when(rs.getDouble(3)).thenReturn(1.5);
 		when(rs.getTimestamp(anyInt())).thenReturn(new Timestamp(0));
+
+		// When
+
+		Ticket result = ticketDAO.getTicket(vehicleRegNumber);
+
+		// Then
+		assertThat(result);
+	}
+	
+	@Test
+	public void getTicketCar_withExceptionShouldReturnFalse() throws Exception {
+
+		// Given
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		when(con.prepareStatement(DBConstants.GET_TICKET)).thenReturn(ps);
+		when(ps.executeQuery()).thenReturn(rs);
+		when(rs.next()).thenReturn(false);
+	
+	
 
 		// When
 
@@ -216,9 +241,6 @@ public class TicketDAOTest {
 		when(con.prepareStatement(DBConstants.GET_TICKET)).thenReturn(ps);
 		when(ps.executeQuery()).thenReturn(rs);
 		when(rs.next()).thenThrow(SQLException.class);
-		
-//		doThrow(SQLException.class).when(ps).setString(2, ticket.getVehicleRegNumber());
-		
 		
 
 		// When

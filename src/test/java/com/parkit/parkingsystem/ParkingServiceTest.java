@@ -87,6 +87,29 @@ public class ParkingServiceTest {
 		verify(parkingSpotDAO, Mockito.times(2)).updateParking(any(ParkingSpot.class));
 	}
 	
+	
+	@Test
+	public void processIncomingVehicleTestEnterInIfParkingSpotNull() throws Exception {
+		// Given
+		String vehicleRegNumber = null;
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		ParkingSpot parkingSpot = new ParkingSpot(6, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+		ParkingType car = ParkingType.CAR;
+		when(parkingSpotDAO.getNextAvailableSlot(car)).thenReturn(2);
+
+		// When
+		parkingService.processIncomingVehicle();
+		
+		// Then
+		verify(parkingSpotDAO, Mockito.times(2)).updateParking(any(ParkingSpot.class));
+	}
+	
 	@Test
 	public void processIncomingVehicleNotSpotParkingTest() throws Exception {
 		// Given
@@ -235,7 +258,7 @@ public class ParkingServiceTest {
 		parkingService.processExitingVehicle();
 
 		// Assert
-		assertThat(logcaptor.getErrorLogs()).contains("Error any vehicle found with number : " + vehicleRegNumber);
+		assertThat(logcaptor.getErrorLogs()).contains("Unable to process exiting vehicle");
 		
 	}
 	
