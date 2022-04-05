@@ -110,16 +110,18 @@ public class ParkingDataBaseIT {
 	public void testParkingLotExitBike() {
 
 		// Given
+		
 		parkingService.processIncomingVehicle();
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
-		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 		
+		ticketDAO.saveTicket(ticket);
+		System.out.println(ticket.getParkingSpot().getParkingType());
 
 		// When
 		parkingService.processExitingVehicle();
-		assertNotNull(ticket.getPrice());
-		assertNotNull(ticket.getOutTime());
+		assertNotNull(ticketDAO.getTicket(VehiculeRegNumber).getPrice());
+		assertNotNull(ticketDAO.getTicket(VehiculeRegNumber).getOutTime());
 
 	}
 
@@ -127,19 +129,19 @@ public class ParkingDataBaseIT {
 	public void testParkingLotExitWhitDiscount() {
 
 		// Given
-
 		parkingService.processIncomingVehicle();
-		new ParkingSpot(1, ParkingType.BIKE, false);
-		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
-		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
 		parkingService.processExitingVehicle();
-
+		parkingService.processIncomingVehicle();
+		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
+		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
+		
+		ticketDAO.saveTicket(ticket);
+		System.out.println(ticket.getParkingSpot().getParkingType());
 		// When
-		fareCalculatorService.calculateFare(ticket);
 
+		parkingService.processExitingVehicle();
 		// Then
-		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
+		assertEquals(0.95 * Fare.CAR_RATE_PER_MINUTE *35, ticketDAO.getTicket(VehiculeRegNumber).getPrice());
 
 		
 	}

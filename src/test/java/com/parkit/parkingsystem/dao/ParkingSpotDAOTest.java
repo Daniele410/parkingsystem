@@ -77,8 +77,6 @@ public class ParkingSpotDAOTest {
 	public void getNextAvailableSlotShouldReturnFalse() throws SQLException {
 		// Given
 
-//		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
-
 		when(con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT)).thenReturn(ps);
 		when(ps.executeQuery()).thenThrow(SQLException.class);
 

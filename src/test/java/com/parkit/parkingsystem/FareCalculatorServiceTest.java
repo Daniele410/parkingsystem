@@ -303,7 +303,7 @@ public class FareCalculatorServiceTest {
 		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
 	}
 
-	@Disabled
+	
 	@Test
 	public void calculateFareCarWithMoreThanHalfAnHourParkingTimeAndDiscount() throws SQLException {
 
@@ -325,7 +325,7 @@ public class FareCalculatorServiceTest {
 //		when(ticketDAO.getTicket(vehicleRegNumber)).thenReturn(ticket);
 		// When
 		fareCalculatorService.calculateDicount(vehicleRegNumber);
-//		fareCalculatorService.calculateFare(ticket);
+		fareCalculatorService.calculateFare(ticket);
 
 		// Then
 		assertEquals((35 * Fare.CAR_RATE_PER_MINUTE * 0.95), ticket.getPrice());
