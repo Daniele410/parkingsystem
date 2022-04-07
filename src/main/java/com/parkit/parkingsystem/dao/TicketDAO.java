@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.time.temporal.ChronoUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,25 +79,24 @@ public class TicketDAO {
 		return ticket;
 	}
 
-	public boolean updateTicket(Ticket ticket) {
-		Connection con = null;
-		PreparedStatement ps = null;
-		try {
-			con = dataBaseConfig.getConnection();
-			ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
-			ps.setDouble(1, ticket.getPrice());
-			ps.setTimestamp(2, Timestamp.valueOf(ticket.getOutTime().truncatedTo(ChronoUnit.SECONDS)));
-			ps.setInt(3, ticket.getId());
-			ps.executeUpdate();
-			return true;
-		} catch (Exception ex) {
-			logger.error("Error saving ticket info", ex);
-		} finally {
-			dataBaseConfig.closePreparedStatement(ps);
-			dataBaseConfig.closeConnection(con);
-		}
-		return false;
-	}
+	 public boolean updateTicket(Ticket ticket) {
+	        Connection con = null;
+	        try {
+	            con = dataBaseConfig.getConnection();
+	            PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
+	            ps.setDouble(1, ticket.getPrice());
+	            ps.setTimestamp(2, Timestamp.valueOf(ticket.getOutTime()));
+	            ps.setInt(3,ticket.getId());
+	            ps.execute();
+	            return true;
+	        }catch (Exception ex){
+	            logger.error("Error saving ticket info",ex);
+	        }finally {
+	            dataBaseConfig.closeConnection(con);
+	        }
+	        return false;
+	    }
+	
 
 	public boolean isCarInside(String vehicleRegNumber) {
 		Connection con = null;
@@ -125,29 +123,30 @@ public class TicketDAO {
 		}
 		return false;
 	}
-
-	// Check if a vehicle reg number is for a recurring user
+	
 	public boolean isRecurring(String vehicleRegNumber) {
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			con = dataBaseConfig.getConnection();
-			ps = con.prepareStatement(DBConstants.CYCLIC_USER);
-			ps.setString(1, vehicleRegNumber);
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				return true;
-			}
-		} catch (Exception ex) {
-			logger.error("Error fetching recurring vehicle ", ex);
-		} finally {
-			dataBaseConfig.closeConnection(con);
-			dataBaseConfig.closeResultSet(rs);
-			dataBaseConfig.closePreparedStatement(ps);
-		}
-		return false;
-	}
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = dataBaseConfig.getConnection();
+            ps = con.prepareStatement(DBConstants.CYCLIC_USER);
+            ps.setString(1,vehicleRegNumber);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+
+        }catch (Exception ex){
+            logger.error("Error fetching recurring vehicle ",ex);
+        }finally {
+            dataBaseConfig.closeResultSet(rs);
+            dataBaseConfig.closePreparedStatement(ps);
+            dataBaseConfig.closeConnection(con);
+        }
+        return false;
+    }
+
 
 	// Check if vehicle Reg Number is saved
 	public boolean isSaved(String vehicleRegNumber) {

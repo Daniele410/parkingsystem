@@ -15,13 +15,18 @@ public class DBConstants {
 	public static final String CYCLIC_USER = "select * from ticket t where t.VEHICLE_REG_NUMBER = ? and OUT_TIME is not null;";
 	// Requête pour savoir si la voiture est dans le parking
 	public static final String IS_CAR_INSIDE = "SELECT * from ticket where VEHICLE_REG_NUMBER = ? and OUT_TIME is null;";
-	// Requête pour efacer le ticket dans le parking
-	public static final String DELETE_TICKET = "delete from ticket where ID=?";
-	// "UPDATE ticket SET PARKING_NUMBER = 0"
+	
 }
 
 
+//Requête pour efacer le ticket dans le parking
+//	public static final String DELETE_TICKET = "delete from ticket where ID=?";
+	// "UPDATE ticket SET PARKING_NUMBER = 0"
 
 //"select count(VEHICLE_REG_NUMBER) from ticket t where t.VEHICLE_REG_NUMBER=?";
 
 //public static final String CYCLIC_USER = "select * from ticket t where t.VEHICLE_REG_NUMBER = ? and OUT_TIME is not null;";
+
+//public static final String CYCLIC_USER = "select exists (select * from ticket t where t.VEHICLE_REG_NUMBER = ?)";
+
+//public static final String CYCLIC_USER = "select count(VEHICLE_REG_NUMBER) from ticket t where t.VEHICLE_REG_NUMBER=?";

@@ -78,8 +78,6 @@ public class TicketDAOTest {
 	}
 	
 	
-	
-
 
 	@Test
 	public void saveTicketWithExceptionShouldReturnFalse() throws SQLException {
@@ -147,27 +145,6 @@ public class TicketDAOTest {
 		// Then
 		assertEquals(expectedValue, actualValue);
 	}
-	
-//	@Test
-//	public void checkIfVehicleGetTicketFalse() throws Exception {
-//		// Given
-//		ticket.setVehicleRegNumber(vehicleRegNumber);
-//		when(con.prepareStatement(DBConstants.GET_TICKET)).thenReturn(ps);
-//		when(ps.executeQuery()).thenReturn(rs);
-//		when(rs.next()).thenReturn(true);
-//		when(rs.getInt(1)).thenReturn(1);
-//		when(rs.getString(anyInt())).thenReturn("CAR");
-//		when(rs.getDouble(3)).thenReturn(1.5);
-//		doNothing().when(ps).setTimestamp(5, null);
-//		
-//		boolean expectedValue = true;
-//
-//		// When
-//		boolean = "ticketDAO.getTicket(vehicleRegNumber)" != null;
-//
-//		// Then
-//		AssertionError(String.valueOf());
-//	}
 
 	@Test
 	public void getTicketCar_withExceptionShouldReturnTrue() throws Exception {
@@ -347,7 +324,7 @@ public class TicketDAOTest {
 		when(con.prepareStatement(DBConstants.IS_CAR_INSIDE)).thenReturn(ps);
 		when(ps.executeQuery()).thenReturn(rs);
 		when(rs.next()).thenThrow(SQLException.class);
-//		doThrow(SQLException.class).when(ps).setString(2, ticket.getVehicleRegNumber());
+
 
 		// When
 		boolean result = ticketDAO.isCarInside(vehicleRegNumber);
