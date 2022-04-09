@@ -1,15 +1,14 @@
 package com.parkit.parkingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -192,24 +191,24 @@ public class ParkingServiceTest {
 		
 	}
 		
-		@Test
-		public void processIncomingVehicleErrorVehicleAlreadyParked() throws Exception , SQLException {
-			// Given
-			String vehicleRegNumber = "ABCDEF";
-			
-			when(inputReaderUtil.readSelection()).thenReturn(1);
-			when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-			when(ticketDAO.getTicket(vehicleRegNumber)).thenReturn(ticket);
-		
-			
-			// When
-			parkingService.processIncomingVehicle();
-			
-			
-			// Then
-			assertThat(logcaptor.getErrorLogs()).contains("Error vehicle already parked");
-		}
+//		@Test
+//		public void processIncomingVehicleErrorVehicleAlreadyParked() throws Exception , SQLException {
+//			// Given
+//			String vehicleRegNumber = "ABCDEF";
+//			
+//			when(inputReaderUtil.readSelection()).thenReturn(1);
+//			when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
+//			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
+//			when(ticketDAO.getTicket(vehicleRegNumber)).thenReturn(ticket);
+//		
+//			
+//			// When
+//			parkingService.processIncomingVehicle();
+//			
+//			
+//			// Then
+//			assertThat(logcaptor.getErrorLogs()).contains("Error vehicle already parked");
+//		}
 		
 		@Test
 		public void processIncomingVehicleIsCarInsideIsRecurringTestLogCaptor() throws Exception {

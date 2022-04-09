@@ -44,8 +44,7 @@ public class ParkingService {
 				
 				boolean isCarInside = ticketDAO.isCarInside(vehicleRegNumber);
 				if (!isCarInside) {
-					parkingSpot.setAvailable(false);
-					parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
+					// allot this parking space and mark it's availability as
 																// false
 					// SI elle n'est pas présente on continue
 					if(ticketDAO.isRecurring(vehicleRegNumber)) {
@@ -53,21 +52,9 @@ public class ParkingService {
 						logger.info(
 								"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 					}
+					parkingSpot.setAvailable(false);
+					parkingSpotDAO.updateParking(parkingSpot);
 				
-				if (ticketDAO.getTicket(vehicleRegNumber) != null) {
-					logger.error("Error vehicle already parked");
-					return;
-				}
-				
-				
-					
-				
-				
-//				parkingSpot.setAvailable(false);
-//				parkingSpotDAO.updateParking(parkingSpot);
-				
-				
-					
 
 					LocalDateTime inTime = LocalDateTime.now();
 					Ticket ticket = new Ticket();
@@ -142,6 +129,7 @@ public class ParkingService {
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
 			LocalDateTime outTime = LocalDateTime.now();
 			ticket.setOutTime(outTime);
+			fareCalculatorService.setTicketDAO(ticketDAO);
 			fareCalculatorService.calculateFare(ticket);
 
 

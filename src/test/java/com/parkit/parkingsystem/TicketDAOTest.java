@@ -1,9 +1,9 @@
 package com.parkit.parkingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -408,6 +408,8 @@ public class TicketDAOTest {
 		// Given
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		when(con.prepareStatement(DBConstants.UPDATE_TICKET)).thenReturn(ps);
+		when(rs.next()).thenReturn(false);
+		when(rs.next()).thenThrow(SQLException.class);
 
 		// When
 		boolean result = ticketDAO.updateTicket(ticket);

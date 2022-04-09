@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,7 +23,6 @@ import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 
@@ -35,15 +33,13 @@ public class ParkingDataBaseIT {
 
 	private static final String VehiculeRegNumber = "ABCDEF";
 
-	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+	private static DataBaseTestConfig dataBaseTestConfig;
 
 	private static DataBasePrepareService dataBasePrepareService;
 
 	private static ParkingSpotDAO parkingSpotDAO;
 
 	private static TicketDAO ticketDAO;
-
-	private static FareCalculatorService fareCalculatorService;
 
 	// Class to be tested
 	private static ParkingService parkingService;
@@ -56,12 +52,12 @@ public class ParkingDataBaseIT {
 	@BeforeAll
 	private static void setUp() throws Exception {
 		System.out.println("BEFORE ALL");
+		dataBaseTestConfig = new DataBaseTestConfig();
+		dataBasePrepareService = new DataBasePrepareService();
 		parkingSpotDAO = new ParkingSpotDAO();
 		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
 		ticketDAO = new TicketDAO();
 		ticketDAO.dataBaseConfig = dataBaseTestConfig;
-		dataBasePrepareService = new DataBasePrepareService();
-		fareCalculatorService = new FareCalculatorService();
 	}
 
 	@BeforeEach
@@ -168,24 +164,23 @@ public class ParkingDataBaseIT {
 
 	}
 
-	@Disabled
+	
 	@Test
 	public void testParkingLotExitWhitDiscount() throws Exception {
 
 		// Given
 		when(inputReaderUtil.readSelection()).thenReturn(1);
-		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("qwerty");
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(VehiculeRegNumber);
 		parkingService.processIncomingVehicle();
+//		ticketDAO.dataBaseConfig = new DataBaseTestConfig();
 		parkingService.processExitingVehicle();
 		parkingService.processIncomingVehicle();
 
-		Ticket ticket = ticketDAO.getTicket("qwerty");
-		ticketDAO.isRecurring(VehiculeRegNumber);
+		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
-		ticket.setOutTime(LocalDateTime.now());
 
-		ticketDAO.saveTicket(ticket);
-//		System.out.println(ticket.getParkingSpot().getParkingType());
+		ticketDAO.updateTicket(ticket);
+		System.out.println(ticket.getParkingSpot().getParkingType());
 		// When
 
 		parkingService.processExitingVehicle();
@@ -195,7 +190,27 @@ public class ParkingDataBaseIT {
 	}
 
 	@Test
-	public void testFreeParkingLotExitWhitDiscount() throws Exception {
+	public void testFreeParkingCarLotExitWhitDiscount() throws Exception {
+
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(VehiculeRegNumber);
+		parkingService.processIncomingVehicle();
+		new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
+
+		// When
+		//fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
+
+	}
+	
+	@Test
+	public void testFreeParkingBikeLotExitWhitDiscount() throws Exception {
 
 		// Given
 		when(inputReaderUtil.readSelection()).thenReturn(2);
@@ -207,7 +222,7 @@ public class ParkingDataBaseIT {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
 
 		// When
-		fareCalculatorService.calculateFare(ticket);
+		//fareCalculatorService.calculateFare(ticket);
 
 		// Then
 		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());

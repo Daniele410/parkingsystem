@@ -85,8 +85,9 @@ public class TicketDAO {
 	            con = dataBaseConfig.getConnection();
 	            PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
 	            ps.setDouble(1, ticket.getPrice());
-	            ps.setTimestamp(2, Timestamp.valueOf(ticket.getOutTime()));
-	            ps.setInt(3,ticket.getId());
+	            ps.setTimestamp(2, (ticket.getOutTime() == null) ? null : (Timestamp.valueOf(ticket.getOutTime())));
+	            ps.setTimestamp(3, Timestamp.valueOf(ticket.getInTime()));
+	            ps.setInt(4,ticket.getId());
 	            ps.execute();
 	            return true;
 	        }catch (Exception ex){
@@ -126,13 +127,11 @@ public class TicketDAO {
 	
 	public boolean isRecurring(String vehicleRegNumber) {
         Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         try {
             con = dataBaseConfig.getConnection();
-            ps = con.prepareStatement(DBConstants.CYCLIC_USER);
+            PreparedStatement ps = con.prepareStatement(DBConstants.CYCLIC_USER);
             ps.setString(1,vehicleRegNumber);
-            rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 return true;
             }
@@ -140,8 +139,7 @@ public class TicketDAO {
         }catch (Exception ex){
             logger.error("Error fetching recurring vehicle ",ex);
         }finally {
-            dataBaseConfig.closeResultSet(rs);
-            dataBaseConfig.closePreparedStatement(ps);
+
             dataBaseConfig.closeConnection(con);
         }
         return false;

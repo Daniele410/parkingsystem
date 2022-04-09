@@ -3,7 +3,6 @@ package com.parkit.parkingsystem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,17 +13,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
-import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
@@ -38,12 +36,12 @@ public class FareCalculatorServiceTest {
 	private static FareCalculatorService fareCalculatorService;
 
 	@Mock
-	private TicketDAO ticketDAO;
+	private static TicketDAO ticketDAO;
 	@Mock
-	private Ticket ticket;
+	private static Ticket ticket;
 
 	@Mock
-	private DataBaseConfig dataBaseConfig;
+	private DataBaseTestConfig baseTestConfig;
 	
 	@Mock
 	private static InputReaderUtil inputReaderUtil;
@@ -66,6 +64,7 @@ public class FareCalculatorServiceTest {
 	@BeforeAll
 	private static void setUp() {
 		fareCalculatorService = new FareCalculatorService();
+		
 
 	}
 
@@ -74,15 +73,15 @@ public class FareCalculatorServiceTest {
 		
 		ticket = new Ticket();
 		ticketDAO = new TicketDAO();
-		ticketDAO.dataBaseConfig = dataBaseConfig;
-
+		ticketDAO.dataBaseConfig = baseTestConfig;
+		
 		ticket.setId(3);
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
 		ticket.setPrice(1.5);
+		Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setOutTime(null);
-
 		logcaptor = LogCaptor.forName("FareCalculatorService");
 		logcaptor.setLogLevelToInfo();
 		
@@ -90,19 +89,34 @@ public class FareCalculatorServiceTest {
 
 	@Test
 	public void calculateFareCar() {
-		// GIVEN
 		
-		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-		ticket.setInTime(LocalDateTime.now());
-		ticket.setVehicleRegNumber(vehicleRegNumber);
-		ticket.setOutTime(LocalDateTime.now().plusDays(1));
-		ticket.setParkingSpot(parkingSpot);
+	        //GIVEN
+			ticketDAO = new TicketDAO();
+	        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+	        ticket.setInTime(LocalDateTime.now());
+	        ticket.setOutTime(LocalDateTime.now().plusDays(1));
+	        ticket.setParkingSpot(parkingSpot);
 
-		// WHEN
-		fareCalculatorService.calculateFare(ticket);
+	        //WHEN
+	        fareCalculatorService.calculateFare(ticket);
 
-		// THEN
-		assertEquals(ticket.getPrice(), 60 *  Fare.CAR_RATE_PER_MINUTE * 24);
+	        //THEN
+	        assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_HOUR);
+	    
+//		// GIVEN
+//		
+//		
+//		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+//		ticket.setInTime(LocalDateTime.now());
+//		ticket.setVehicleRegNumber(vehicleRegNumber);
+//		ticket.setOutTime(LocalDateTime.now().plusDays(1));
+//		ticket.setParkingSpot(parkingSpot);
+//
+//		// WHEN
+//		fareCalculatorService.calculateFare(ticket);
+//
+//		// THEN
+//		assertEquals(ticket.getPrice(), 60 *  Fare.CAR_RATE_PER_MINUTE * 24);
 	}
 
 	@Test
@@ -287,22 +301,23 @@ public class FareCalculatorServiceTest {
 		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
 	}
 
-	@Disabled
+
 	@Test
 	public void calculateFareCarWithMoreThanHalfAnHourParkingTimeAndDiscount() throws Exception {
 
 		// Given
-
+		String VehiculeRegNumber = "ABCDEF";
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-		ticket.setVehicleRegNumber(vehicleRegNumber);
-		
-		when(con.prepareStatement(DBConstants.CYCLIC_USER)).thenReturn(ps);
-		when(ps.executeQuery()).thenReturn(rs);
-		when(rs.next()).thenReturn(true);
 		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
+		ticketDAO.getTicket(VehiculeRegNumber);
+		ticketDAO.isRecurring(VehiculeRegNumber);
+//		when(con.prepareStatement(DBConstants.CYCLIC_USER)).thenReturn(ps);
+//		when(ps.executeQuery()).thenReturn(rs);
+//		when(rs.next()).thenReturn(true);
 		
 //		ticketDAO.isRecurring(vehicleRegNumber);
 //		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
@@ -313,8 +328,10 @@ public class FareCalculatorServiceTest {
 		// When
 //		fareCalculatorService.calculateDicount(vehicleRegNumber);
 		fareCalculatorService.calculateFare(ticket);
+		
 
 		// Then
+		
 //		assertEquals((35 * Fare.CAR_RATE_PER_MINUTE * 0.95), ticket.getPrice());
 		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehicleRegNumber).getPrice());
 	}
@@ -324,8 +341,6 @@ public class FareCalculatorServiceTest {
 	public void calculateFareBikeWithMoreThanHalfAnHourParkingTime() {
 
 		// Given
-		
-		
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setVehicleRegNumber(vehicleRegNumber);

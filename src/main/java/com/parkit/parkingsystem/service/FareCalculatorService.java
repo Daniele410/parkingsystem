@@ -13,7 +13,11 @@ import com.parkit.parkingsystem.model.Ticket;
  */
 public class FareCalculatorService {
 
-	private TicketDAO ticketDAO = new TicketDAO();
+	private TicketDAO ticketDAO;
+	
+	public void setTicketDAO(TicketDAO ticketDAO) {
+		this.ticketDAO = ticketDAO;
+	}
 
 	public void calculateFare(Ticket ticket) {
 		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
