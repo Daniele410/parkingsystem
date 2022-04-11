@@ -408,8 +408,8 @@ public class TicketDAOTest {
 		// Given
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		when(con.prepareStatement(DBConstants.UPDATE_TICKET)).thenReturn(ps);
-		when(rs.next()).thenReturn(false);
-		when(rs.next()).thenThrow(SQLException.class);
+		when(ps.execute()).thenReturn(false);
+		when(ps.execute()).thenThrow(SQLException.class);
 
 		// When
 		boolean result = ticketDAO.updateTicket(ticket);

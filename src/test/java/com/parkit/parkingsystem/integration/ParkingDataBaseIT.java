@@ -42,6 +42,7 @@ public class ParkingDataBaseIT {
 	private static TicketDAO ticketDAO;
 
 	// Class to be tested
+
 	private static ParkingService parkingService;
 
 	@Mock
@@ -64,9 +65,6 @@ public class ParkingDataBaseIT {
 	private void setUpPerTest() throws Exception {
 		System.out.println("BEFORE EACH");
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-
-//		when(inputReaderUtil.readSelection()).thenReturn(1);
-//		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(VehiculeRegNumber);
 		dataBasePrepareService.clearDataBaseEntries();
 		logcaptor = LogCaptor.forName("FareCalculatorService");
 		logcaptor.setLogLevelToInfo();
@@ -164,7 +162,6 @@ public class ParkingDataBaseIT {
 
 	}
 
-	
 	@Test
 	public void testParkingLotExitWhitDiscount() throws Exception {
 
@@ -172,7 +169,6 @@ public class ParkingDataBaseIT {
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(VehiculeRegNumber);
 		parkingService.processIncomingVehicle();
-//		ticketDAO.dataBaseConfig = new DataBaseTestConfig();
 		parkingService.processExitingVehicle();
 		parkingService.processIncomingVehicle();
 
@@ -191,6 +187,28 @@ public class ParkingDataBaseIT {
 
 	@Test
 	public void testFreeParkingCarLotExitWhitDiscount() throws Exception {
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(2);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(VehiculeRegNumber);
+		parkingService.processIncomingVehicle();
+		parkingService.processExitingVehicle();
+		parkingService.processIncomingVehicle();
+
+		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
+		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
+
+//		ticketDAO.updateTicket(ticket);
+//		System.out.println(ticket.getParkingSpot().getParkingType());
+		// When
+
+		parkingService.processExitingVehicle();
+		// Then
+		assertEquals(35 * Fare.BIKE_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(VehiculeRegNumber).getPrice());
+
+	}
+
+	@Test
+	public void calculateFareCarWithLessThanOneHourParkingTime() throws Exception {
 
 		// Given
 		when(inputReaderUtil.readSelection()).thenReturn(1);
@@ -199,16 +217,18 @@ public class ParkingDataBaseIT {
 		new ParkingSpot(1, ParkingType.CAR, false);
 		Ticket ticket = ticketDAO.getTicket(VehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now());
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(40));
+		ticketDAO.saveTicket(ticket);
+//		ticketDAO.updateTicket(ticket);
 
 		// When
-		//fareCalculatorService.calculateFare(ticket);
-
+		parkingService.processExitingVehicle();
+		
 		// Then
-		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
+		assertEquals(40 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
 
 	}
-	
+
 	@Test
 	public void testFreeParkingBikeLotExitWhitDiscount() throws Exception {
 
@@ -222,7 +242,7 @@ public class ParkingDataBaseIT {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
 
 		// When
-		//fareCalculatorService.calculateFare(ticket);
+		// fareCalculatorService.calculateFare(ticket);
 
 		// Then
 		assertEquals(0 * Fare.BIKE_RATE_PER_MINUTE, ticket.getPrice());
