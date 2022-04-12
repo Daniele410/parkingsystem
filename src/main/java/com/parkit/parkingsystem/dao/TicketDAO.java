@@ -127,11 +127,13 @@ public class TicketDAO {
 	
 	public boolean isRecurring(String vehicleRegNumber) {
         Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
             con = dataBaseConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement(DBConstants.CYCLIC_USER);
+            ps = con.prepareStatement(DBConstants.CYCLIC_USER);
             ps.setString(1,vehicleRegNumber);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if(rs.next()){
                 return true;
             }
@@ -141,6 +143,8 @@ public class TicketDAO {
         }finally {
 
             dataBaseConfig.closeConnection(con);
+            dataBaseConfig.closePreparedStatement(ps);
+            dataBaseConfig.closeResultSet(rs);
         }
         return false;
     }

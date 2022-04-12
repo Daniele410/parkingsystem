@@ -94,6 +94,22 @@ public class ParkingServiceTest {
 		// Then
 		assertEquals(parkingSpot, parkingService.getNextParkingNumberIfAvailable());
 	}
+	
+	@Test
+	public void getVehicleTypeTestCar() {
+
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setVehicleRegNumber("ABCDEF");
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
+		// Then
+		assertEquals(ParkingType.CAR, parkingService.getVehichleType());
+	}
 
 
 	@Test
@@ -125,6 +141,8 @@ public class ParkingServiceTest {
 		verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
 		assertNull(parkingSpot);
 	}
+	
+	
 
 	@Test
 	public void getVehicleTypeButIllegalArgumentExceptionIsThrown() {
@@ -191,24 +209,6 @@ public class ParkingServiceTest {
 		
 	}
 		
-//		@Test
-//		public void processIncomingVehicleErrorVehicleAlreadyParked() throws Exception , SQLException {
-//			// Given
-//			String vehicleRegNumber = "ABCDEF";
-//			
-//			when(inputReaderUtil.readSelection()).thenReturn(1);
-//			when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
-//			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-//			when(ticketDAO.getTicket(vehicleRegNumber)).thenReturn(ticket);
-//		
-//			
-//			// When
-//			parkingService.processIncomingVehicle();
-//			
-//			
-//			// Then
-//			assertThat(logcaptor.getErrorLogs()).contains("Error vehicle already parked");
-//		}
 		
 		@Test
 		public void processIncomingVehicleIsCarInsideIsRecurringTestLogCaptor() throws Exception {

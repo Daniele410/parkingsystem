@@ -3,7 +3,6 @@ package com.parkit.parkingsystem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -282,23 +280,25 @@ public class FareCalculatorServiceTest {
 		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
 	}
 
-	@Disabled
 	@Test
 	public void calculateFareCarWithMoreThanHalfAnHourParkingTimeAndDiscount() throws Exception {
 
-		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(45));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
-		when(ticketDAO.isRecurring(anyString())).thenReturn(true);
+		ticket.getPrice();
+		ticketDAO.getTicket(vehicleRegNumber);
+//		when(ticketDAO.isRecurring(anyString())).thenReturn(true);
 		// When
+		fareCalculatorService.calculateDicount(vehicleRegNumber);
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
 
-//		assertEquals((35 * Fare.CAR_RATE_PER_MINUTE * 0.95), ticket.getPrice());
-		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehicleRegNumber).getPrice());
+		assertEquals((45 * Fare.CAR_RATE_PER_MINUTE ), ticket.getPrice());
+//		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehicleRegNumber).getPrice());
 	}
 
 	@Test

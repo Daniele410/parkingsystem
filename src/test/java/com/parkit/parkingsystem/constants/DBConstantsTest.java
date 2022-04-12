@@ -63,7 +63,7 @@ class DBConstantsTest {
 	public void verifyQuerySaveTicket() {
 
 		assertEquals(DBConstants.IS_CAR_INSIDE,
-				"SELECT * from ticket where VEHICLE_REG_NUMBER=? and OUT_TIME is null;");
+				"SELECT * from ticket where VEHICLE_REG_NUMBER=? and OUT_TIME is NULL");
 
 	}
 
