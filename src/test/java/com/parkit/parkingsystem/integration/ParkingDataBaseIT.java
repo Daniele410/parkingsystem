@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -164,7 +165,7 @@ public class ParkingDataBaseIT {
 
 	}
 
-	
+	@Disabled
 	@Test
 	public void testParkingLotExitWhitDiscount() throws Exception {
 
@@ -191,7 +192,7 @@ public class ParkingDataBaseIT {
 
 	}
 
-	
+	@Disabled
 	@Test
 	public void calculateFareCarWithLessThanOneHourParkingTime() throws Exception {
 
@@ -212,7 +213,7 @@ public class ParkingDataBaseIT {
 
 	}
 
-	
+	@Disabled
 	@Test
 	public void calculateFareBikeWithLessThanOneHourParkingTime() throws Exception {
 
