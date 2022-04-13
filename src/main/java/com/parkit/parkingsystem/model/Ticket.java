@@ -10,11 +10,17 @@ import java.time.LocalDateTime;
  */
 
 public class Ticket {
+	
 	private int id;
+	
 	private ParkingSpot parkingSpot;
+	
 	private String vehicleRegNumber;
+	
 	private double price;
+	
 	private LocalDateTime inTime;
+	
 	private LocalDateTime outTime;
 
 	public int getId() {
@@ -62,7 +68,7 @@ public class Ticket {
 	}
 
 	public void setOutTime(LocalDateTime outTime) {
-		this.outTime = outTime;
+			this.outTime = outTime;
 	}
 
 }

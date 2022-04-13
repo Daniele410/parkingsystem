@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -165,13 +164,13 @@ public class ParkingDataBaseIT {
 
 	}
 
-	@Disabled
+	
 	@Test
 	public void testParkingLotExitWhitDiscount() throws Exception {
 
 		// Given
 		when(inputReaderUtil.readSelection()).thenReturn(1);
-		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("qwerty");
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
 		
 		parkingService.processIncomingVehicle();
 	
@@ -179,7 +178,7 @@ public class ParkingDataBaseIT {
 		
 		parkingService.processIncomingVehicle();
 
-		Ticket ticket = ticketDAO.getTicket("qwerty");
+		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 
 		ticketDAO.updateTicket(ticket);
@@ -188,11 +187,11 @@ public class ParkingDataBaseIT {
 
 		parkingService.processExitingVehicle();
 		// Then
-		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket("qwerty").getPrice());
+		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
 
 	}
 
-	@Disabled
+	
 	@Test
 	public void calculateFareCarWithLessThanOneHourParkingTime() throws Exception {
 
@@ -213,7 +212,7 @@ public class ParkingDataBaseIT {
 
 	}
 
-	@Disabled
+	
 	@Test
 	public void calculateFareBikeWithLessThanOneHourParkingTime() throws Exception {
 
