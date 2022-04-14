@@ -292,6 +292,7 @@ public class TicketDAOTest {
 		when(con.prepareStatement(DBConstants.IS_CAR_INSIDE)).thenReturn(ps);
 		when(ps.executeQuery()).thenReturn(rs);
 		when(rs.next()).thenReturn(true);
+		when(rs.getString(1)).thenReturn(vehicleRegNumber);
 		
 
 		// When

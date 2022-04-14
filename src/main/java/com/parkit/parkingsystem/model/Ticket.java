@@ -31,14 +31,7 @@ public class Ticket {
 		this.id = id;
 	}
 
-	public ParkingSpot getParkingSpot() {
-		return parkingSpot;
-	}
-
-	public void setParkingSpot(ParkingSpot parkingSpot) {
-		this.parkingSpot = parkingSpot;
-	}
-
+	
 	public String getVehicleRegNumber() {
 		return vehicleRegNumber;
 	}
@@ -69,6 +62,14 @@ public class Ticket {
 
 	public void setOutTime(LocalDateTime outTime) {
 			this.outTime = outTime;
+	}
+
+	public ParkingSpot getParkingSpot() {
+		return parkingSpot;
+	}
+
+	public void setParkingSpot(ParkingSpot parkingSpot) {
+		this.parkingSpot = parkingSpot;
 	}
 
 }

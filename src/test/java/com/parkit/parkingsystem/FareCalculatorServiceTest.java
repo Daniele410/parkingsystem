@@ -290,7 +290,7 @@ public class FareCalculatorServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		ticket.getPrice();
 		ticketDAO.getTicket(vehicleRegNumber);
-//		when(ticketDAO.isRecurring(anyString())).thenReturn(true);
+
 		// When
 		fareCalculatorService.calculateDicount(vehicleRegNumber);
 		fareCalculatorService.calculateFare(ticket);
@@ -298,7 +298,7 @@ public class FareCalculatorServiceTest {
 		// Then
 
 		assertEquals((45 * Fare.CAR_RATE_PER_MINUTE ), ticket.getPrice());
-//		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehicleRegNumber).getPrice());
+
 	}
 
 	@Test

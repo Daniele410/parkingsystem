@@ -72,7 +72,7 @@ public class ParkingDataBaseIT {
 	@AfterEach
 	private void tearDown() {
 		System.out.println("AFTER EACH");
-//		dataBasePrepareService.clearDataBaseEntries();
+		dataBasePrepareService.clearDataBaseEntries();
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class ParkingDataBaseIT {
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
 		parkingService.processIncomingVehicle();
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
-		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
+		ticket.setInTime(LocalDateTime.now().minusMinutes(40));
 
 		ticketDAO.updateTicket(ticket);
 		
@@ -208,7 +208,7 @@ public class ParkingDataBaseIT {
 
 		parkingService.processExitingVehicle();
 		// Then
-		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
+		assertEquals(40 * Fare.CAR_RATE_PER_MINUTE, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
 
 	}
 

@@ -110,7 +110,7 @@ public class TicketDAO {
 			ps.setString(1, vehicleRegNumber);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				return true;
+				return (rs.getString(1) != null);
 			}
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
