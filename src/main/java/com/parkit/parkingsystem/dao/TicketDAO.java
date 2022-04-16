@@ -62,11 +62,9 @@ public class TicketDAO {
 				ticket.setPrice(rs.getDouble(3));
 				ticket.setInTime(rs.getTimestamp(4).toLocalDateTime());
 				ticket.setOutTime((rs.getTimestamp(5) == null) ? null : rs.getTimestamp(5).toLocalDateTime());
-				
-				
+
 			}
-			dataBaseConfig.closeResultSet(rs);
-			dataBaseConfig.closePreparedStatement(ps);
+
 		} catch (Exception ex) {
 			logger.error("Error fetching ticket info", ex);
 		} finally {
@@ -79,24 +77,27 @@ public class TicketDAO {
 		return ticket;
 	}
 
-	 public boolean updateTicket(Ticket ticket) {
-	        Connection con = null;
-	        try {
-	            con = dataBaseConfig.getConnection();
-	            PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
-	            ps.setDouble(1, ticket.getPrice());
-	            ps.setTimestamp(2, Timestamp.valueOf(ticket.getOutTime()));
-	            ps.setInt(3,ticket.getId());
-	            ps.execute();
-	            return true;
-	        }catch (Exception ex){
-	            logger.error("Error saving ticket info",ex);
-	        }finally {
-	            dataBaseConfig.closeConnection(con);
-	        }
-	        return false;
-	    }
-	
+	public boolean updateTicket(Ticket ticket) {
+		Connection con = null;
+		PreparedStatement ps = null;
+
+		try {
+			con = dataBaseConfig.getConnection();
+			ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
+			ps.setDouble(1, ticket.getPrice());
+			ps.setTimestamp(2, (ticket.getOutTime() == null) ? null : (Timestamp.valueOf(ticket.getOutTime())));
+			ps.setTimestamp(3, Timestamp.valueOf(ticket.getInTime()));
+			ps.setInt(4, ticket.getId());
+			ps.execute();
+			return true;
+		} catch (Exception ex) {
+			logger.error("Error saving ticket info", ex);
+		} finally {
+			dataBaseConfig.closeConnection(con);
+			dataBaseConfig.closePreparedStatement(ps);
+		}
+		return false;
+	}
 
 	public boolean isCarInside(String vehicleRegNumber) {
 		Connection con = null;
@@ -108,7 +109,7 @@ public class TicketDAO {
 			ps.setString(1, vehicleRegNumber);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				return true;
+				return (rs.getString(1) != null);
 			}
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
@@ -123,72 +124,29 @@ public class TicketDAO {
 		}
 		return false;
 	}
-	
+
 	public boolean isRecurring(String vehicleRegNumber) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = dataBaseConfig.getConnection();
-            ps = con.prepareStatement(DBConstants.CYCLIC_USER);
-            ps.setString(1,vehicleRegNumber);
-            rs = ps.executeQuery();
-            if(rs.next()){
-                return true;
-            }
-
-        }catch (Exception ex){
-            logger.error("Error fetching recurring vehicle ",ex);
-        }finally {
-            dataBaseConfig.closeResultSet(rs);
-            dataBaseConfig.closePreparedStatement(ps);
-            dataBaseConfig.closeConnection(con);
-        }
-        return false;
-    }
-
-
-	// Check if vehicle Reg Number is saved
-	public boolean isSaved(String vehicleRegNumber) {
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			con = dataBaseConfig.getConnection();
-			ps = con.prepareStatement(DBConstants.SAVE_TICKET);
+			ps = con.prepareStatement(DBConstants.CYCLIC_USER);
 			ps.setString(1, vehicleRegNumber);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				dataBaseConfig.closePreparedStatement(ps);
 				return true;
 			}
+
 		} catch (Exception ex) {
-			logger.error("Error fetching recurring vehicle ", ex);
+			logger.error("Error fetching recurring vehicle", ex);
 		} finally {
+
 			dataBaseConfig.closeConnection(con);
-			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
+			dataBaseConfig.closeResultSet(rs);
 		}
 		return false;
-
 	}
 
-//	public boolean deleteTicket(Ticket ticket) {
-//		Connection con = null;
-//		PreparedStatement ps = null;
-//		try {
-//			con = dataBaseConfig.getConnection();
-//			ps = con.prepareStatement(DBConstants.DELETE_TICKET);
-//			ps.setInt(1, ticket.getId());
-//			ps.execute();
-//			System.out.println("Delete to the vehicle");
-//			return true;
-//		} catch (Exception ex) {
-//			logger.error("ERROR when delete to the vehicle", ex);
-//			return false;
-//		} finally {
-//			dataBaseConfig.closeConnection(con);
-//			dataBaseConfig.closePreparedStatement(ps);
-//		}
-//	}
 }

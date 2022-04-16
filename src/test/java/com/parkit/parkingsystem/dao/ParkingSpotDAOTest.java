@@ -2,6 +2,7 @@ package com.parkit.parkingsystem.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -155,6 +156,14 @@ public class ParkingSpotDAOTest {
 		assertEquals(expectedValue, actualValue);
 	}
 
+	
+
+	    @Test
+	    public void updateParkingNotFoundTest() {
+	    	 ParkingSpot parkingSpotNotFound = new ParkingSpot(100, ParkingType.CAR, false);
+	        assertFalse(parkingSpotDAO.updateParking(parkingSpotNotFound));
+
+	    }
 	
 	
 }

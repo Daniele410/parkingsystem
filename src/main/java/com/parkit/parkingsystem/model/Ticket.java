@@ -9,13 +9,21 @@ import java.time.LocalDateTime;
  *
  */
 
-public class Ticket {
+public class Ticket  {
+	
 	private int id;
+	
 	private ParkingSpot parkingSpot;
+	
 	private String vehicleRegNumber;
+	
 	private double price;
+	
 	private LocalDateTime inTime;
+	
 	private LocalDateTime outTime;
+	
+	
 
 	public int getId() {
 		return id;
@@ -25,14 +33,7 @@ public class Ticket {
 		this.id = id;
 	}
 
-	public ParkingSpot getParkingSpot() {
-		return parkingSpot;
-	}
-
-	public void setParkingSpot(ParkingSpot parkingSpot) {
-		this.parkingSpot = parkingSpot;
-	}
-
+	
 	public String getVehicleRegNumber() {
 		return vehicleRegNumber;
 	}
@@ -62,7 +63,18 @@ public class Ticket {
 	}
 
 	public void setOutTime(LocalDateTime outTime) {
-		this.outTime = outTime;
+			this.outTime = outTime;
 	}
+
+	public ParkingSpot getParkingSpot() {
+				return parkingSpot;
+	}
+
+	public void setParkingSpot(ParkingSpot parkingSpot) {
+		this.parkingSpot = parkingSpot;
+		
+	}
+	
+	
 
 }

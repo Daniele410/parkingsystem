@@ -1,15 +1,14 @@
 package com.parkit.parkingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -95,6 +94,22 @@ public class ParkingServiceTest {
 		// Then
 		assertEquals(parkingSpot, parkingService.getNextParkingNumberIfAvailable());
 	}
+	
+	@Test
+	public void getVehicleTypeTestCar() {
+
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setVehicleRegNumber("ABCDEF");
+		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
+		// Then
+		assertEquals(ParkingType.CAR, parkingService.getVehichleType());
+	}
 
 
 	@Test
@@ -126,6 +141,8 @@ public class ParkingServiceTest {
 		verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
 		assertNull(parkingSpot);
 	}
+	
+	
 
 	@Test
 	public void getVehicleTypeButIllegalArgumentExceptionIsThrown() {
@@ -145,6 +162,7 @@ public class ParkingServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
+		when(ticketDAO.isCarInside("ABCDEF")).thenReturn(true);
 		when(ticketDAO.updateTicket(ticket)).thenReturn(true);
 
 		// When
@@ -164,7 +182,8 @@ public class ParkingServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
-		when(ticketDAO.updateTicket(ticket)).thenReturn(false);
+		when(ticketDAO.isCarInside("ABCDEF")).thenReturn(false);
+
 		
 		// When
 		parkingService.processExitingVehicle();
@@ -192,24 +211,6 @@ public class ParkingServiceTest {
 		
 	}
 		
-		@Test
-		public void processIncomingVehicleErrorVehicleAlreadyParked() throws Exception , SQLException {
-			// Given
-			String vehicleRegNumber = "ABCDEF";
-			
-			when(inputReaderUtil.readSelection()).thenReturn(1);
-			when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-			when(ticketDAO.getTicket(vehicleRegNumber)).thenReturn(ticket);
-		
-			
-			// When
-			parkingService.processIncomingVehicle();
-			
-			
-			// Then
-			assertThat(logcaptor.getErrorLogs()).contains("Error vehicle already parked");
-		}
 		
 		@Test
 		public void processIncomingVehicleIsCarInsideIsRecurringTestLogCaptor() throws Exception {

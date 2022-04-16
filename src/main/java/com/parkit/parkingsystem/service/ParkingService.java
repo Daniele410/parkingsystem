@@ -38,38 +38,25 @@ public class ParkingService {
 			ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
 				String vehicleRegNumber = getVehichleRegNumber();
-				
+
 				// Vérifier si la voiture est déjà présente dans le parking
-				
-				
+
 				boolean isCarInside = ticketDAO.isCarInside(vehicleRegNumber);
 				if (!isCarInside) {
-					parkingSpot.setAvailable(false);
-					parkingSpotDAO.updateParking(parkingSpot);// allot this parking space and mark it's availability as
-																// false
+					// allot this parking space and mark it's availability as
+					// false
 					// SI elle n'est pas présente on continue
-					if(ticketDAO.isRecurring(vehicleRegNumber)) {
+
+					parkingSpot.setAvailable(false);
+					parkingSpotDAO.updateParking(parkingSpot);
+					if (ticketDAO.isRecurring(vehicleRegNumber)) {
 						System.out.println("");
 						logger.info(
 								"Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
 					}
-				
-				if (ticketDAO.getTicket(vehicleRegNumber) != null) {
-					logger.error("Error vehicle already parked");
-					return;
-				}
-				
-				
-					
-				
-				
-//				parkingSpot.setAvailable(false);
-//				parkingSpotDAO.updateParking(parkingSpot);
-				
-				
-					
 
 					LocalDateTime inTime = LocalDateTime.now();
+
 					Ticket ticket = new Ticket();
 					// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 //					 ticket.setId(ticketID);
@@ -99,7 +86,7 @@ public class ParkingService {
 	}
 
 	public ParkingSpot getNextParkingNumberIfAvailable() {
-		int parkingNumber;
+		int parkingNumber = 0;
 		ParkingSpot parkingSpot = null;
 		try {
 			ParkingType parkingType = getVehichleType();
@@ -138,14 +125,16 @@ public class ParkingService {
 
 	public void processExitingVehicle() {
 		try {
+			
 			String vehicleRegNumber = getVehichleRegNumber();
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
 			LocalDateTime outTime = LocalDateTime.now();
 			ticket.setOutTime(outTime);
+			fareCalculatorService.setTicketDAO(ticketDAO);
 			fareCalculatorService.calculateFare(ticket);
-
-
-			if (ticketDAO.updateTicket(ticket)) {
+			
+			
+			if (ticketDAO.isCarInside(vehicleRegNumber) && ticketDAO.updateTicket(ticket)) {
 				ParkingSpot parkingSpot = ticket.getParkingSpot();
 				parkingSpot.setAvailable(true);
 				parkingSpotDAO.updateParking(parkingSpot);
@@ -159,6 +148,5 @@ public class ParkingService {
 		} catch (Exception e) {
 			logger.error("Unable to process exiting vehicle", e);
 		}
-
 	}
 }

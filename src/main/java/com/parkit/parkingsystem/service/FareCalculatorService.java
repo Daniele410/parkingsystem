@@ -13,7 +13,20 @@ import com.parkit.parkingsystem.model.Ticket;
  */
 public class FareCalculatorService {
 
-	private TicketDAO ticketDAO = new TicketDAO();
+	private TicketDAO ticketDAO;
+	
+
+
+	public void setTicketDAO(TicketDAO ticketDAO) {
+		this.ticketDAO = ticketDAO;
+		
+	}
+	
+	
+	/**
+     * Fare Calculator for a specific ticket.
+     * @param ticket the ticket.
+     */
 
 	public void calculateFare(Ticket ticket) {
 		if ((ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime()))) {
@@ -47,6 +60,7 @@ public class FareCalculatorService {
 	public double calculateDicount(String vehicleRegNumber) {
 
 		// Si utilisateur réccurent alors on retourn 0.95 sinon on retourne 1
+		
 		if (ticketDAO.isRecurring(vehicleRegNumber)) {
 			return 0.95;
 		} else
