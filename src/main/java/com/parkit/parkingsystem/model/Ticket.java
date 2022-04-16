@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  *
  */
 
-public class Ticket {
+public class Ticket  {
 	
 	private int id;
 	
@@ -22,6 +22,8 @@ public class Ticket {
 	private LocalDateTime inTime;
 	
 	private LocalDateTime outTime;
+	
+	
 
 	public int getId() {
 		return id;
@@ -65,11 +67,14 @@ public class Ticket {
 	}
 
 	public ParkingSpot getParkingSpot() {
-		return parkingSpot;
+				return parkingSpot;
 	}
 
 	public void setParkingSpot(ParkingSpot parkingSpot) {
 		this.parkingSpot = parkingSpot;
+		
 	}
+	
+	
 
 }

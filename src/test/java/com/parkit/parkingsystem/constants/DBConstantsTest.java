@@ -39,7 +39,7 @@ class DBConstantsTest {
 	public void verifyQueryUpdateTicket() {
 
 		assertEquals(DBConstants.UPDATE_TICKET,
-				"update ticket set PRICE=?, OUT_TIME=?, IN_TIME=? where ID=?");
+				"update ticket set PRICE=?, OUT_TIME=?, IN_TIME=? WHERE ID=?");
 
 	}
 

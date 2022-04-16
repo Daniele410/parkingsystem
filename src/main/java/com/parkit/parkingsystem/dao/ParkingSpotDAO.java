@@ -42,7 +42,6 @@ public class ParkingSpotDAO {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
 			dataBaseConfig.closeResultSet(rs);
-			dataBaseConfig.closeConnection(con);
 			dataBaseConfig.closePreparedStatement(ps);
 			dataBaseConfig.closeConnection(con);
 		}

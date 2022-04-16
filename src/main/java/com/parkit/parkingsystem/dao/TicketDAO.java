@@ -64,8 +64,7 @@ public class TicketDAO {
 				ticket.setOutTime((rs.getTimestamp(5) == null) ? null : rs.getTimestamp(5).toLocalDateTime());
 
 			}
-			dataBaseConfig.closeResultSet(rs);
-			dataBaseConfig.closePreparedStatement(ps);
+
 		} catch (Exception ex) {
 			logger.error("Error fetching ticket info", ex);
 		} finally {
@@ -140,7 +139,7 @@ public class TicketDAO {
 			}
 
 		} catch (Exception ex) {
-			logger.error("Error fetching recurring vehicle ", ex);
+			logger.error("Error fetching recurring vehicle", ex);
 		} finally {
 
 			dataBaseConfig.closeConnection(con);
@@ -148,31 +147,6 @@ public class TicketDAO {
 			dataBaseConfig.closeResultSet(rs);
 		}
 		return false;
-	}
-
-	// Check if vehicle Reg Number is saved
-	public boolean isSaved(String vehicleRegNumber) {
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			con = dataBaseConfig.getConnection();
-			ps = con.prepareStatement(DBConstants.SAVE_TICKET);
-			ps.setString(1, vehicleRegNumber);
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				dataBaseConfig.closePreparedStatement(ps);
-				return true;
-			}
-		} catch (Exception ex) {
-			logger.error("Error fetching recurring vehicle ", ex);
-		} finally {
-			dataBaseConfig.closeConnection(con);
-			dataBaseConfig.closeResultSet(rs);
-			dataBaseConfig.closePreparedStatement(ps);
-		}
-		return false;
-
 	}
 
 }

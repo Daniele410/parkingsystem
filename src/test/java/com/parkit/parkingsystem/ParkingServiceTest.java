@@ -162,6 +162,7 @@ public class ParkingServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
+		when(ticketDAO.isCarInside("ABCDEF")).thenReturn(true);
 		when(ticketDAO.updateTicket(ticket)).thenReturn(true);
 
 		// When
@@ -181,7 +182,8 @@ public class ParkingServiceTest {
 		ticket.setParkingSpot(parkingSpot);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
-		when(ticketDAO.updateTicket(ticket)).thenReturn(false);
+		when(ticketDAO.isCarInside("ABCDEF")).thenReturn(false);
+
 		
 		// When
 		parkingService.processExitingVehicle();
