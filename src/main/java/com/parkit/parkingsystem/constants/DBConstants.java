@@ -16,7 +16,7 @@ public class DBConstants {
 	public static final String GET_TICKET = "select t.PARKING_NUMBER, t.ID, t.PRICE, t.IN_TIME, t.OUT_TIME, p.TYPE from ticket t,parking p where p.parking_number = t.parking_number and t.VEHICLE_REG_NUMBER=? order by t.ID desc limit 1";
 	
 	// Requête pour vérifier si une voiture est déjà venue dans le parking
-	public static final String CYCLIC_USER = "SELECT FROM ticket WHERE VEHICLE_REG_NUMBER=? and OUT_TIME IS NOT NULL";
+	public static final String CYCLIC_USER = "SELECT * FROM ticket WHERE VEHICLE_REG_NUMBER=? and OUT_TIME IS NOT NULL";
 
 	// Requête pour savoir si la voiture est dans le parking
 	public static final String IS_CAR_INSIDE = "select min(VEHICLE_REG_NUMBER) from ticket  where VEHICLE_REG_NUMBER = ? and OUT_TIME is NULL ";
