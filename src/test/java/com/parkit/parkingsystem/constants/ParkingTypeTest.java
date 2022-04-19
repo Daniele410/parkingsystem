@@ -36,7 +36,7 @@ public class ParkingTypeTest {
 	};
 
 	@Test
-	public void Bike() {
+	public void parkingTypeBike() {
 		assertEquals(ParkingType.BIKE, ParkingType.BIKE);
 
 	};

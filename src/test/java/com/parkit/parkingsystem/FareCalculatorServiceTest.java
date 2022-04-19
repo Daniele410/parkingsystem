@@ -356,5 +356,6 @@ public class FareCalculatorServiceTest {
 		// Then
 		assertEquals(false, result);
 	}
+	
 
 }

@@ -175,16 +175,13 @@ public class ParkingDataBaseIT {
 		
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
-		
 		parkingService.processIncomingVehicle();
 		parkingService.processExitingVehicle();
-		
 		parkingService.processIncomingVehicle();
-
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 		ticketDAO.updateTicket(ticket);
-//		ticketDAO.saveTicket(ticket);
+
 
 		
 		// When
