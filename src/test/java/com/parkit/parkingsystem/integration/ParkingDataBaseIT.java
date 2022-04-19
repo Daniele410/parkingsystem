@@ -176,12 +176,14 @@ public class ParkingDataBaseIT {
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
 		parkingService.processIncomingVehicle();
+		Thread.sleep(1000);
 		parkingService.processExitingVehicle();
 		parkingService.processIncomingVehicle();
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 		ticketDAO.updateTicket(ticket);
-
+		//Le test va trop vite pour le calcul de temps
+		Thread.sleep(1000);
 
 		
 		// When
@@ -204,7 +206,7 @@ public class ParkingDataBaseIT {
 		ticket.setInTime(LocalDateTime.now().minusMinutes(40));
 
 		ticketDAO.updateTicket(ticket);
-		
+		Thread.sleep(1000);
 		// When
 
 		parkingService.processExitingVehicle();
@@ -225,7 +227,7 @@ public class ParkingDataBaseIT {
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 		
 		ticketDAO.updateTicket(ticket);
-		
+		Thread.sleep(1000);
 		
 		// When
 
