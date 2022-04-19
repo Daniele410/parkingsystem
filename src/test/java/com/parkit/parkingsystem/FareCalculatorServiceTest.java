@@ -3,6 +3,7 @@ package com.parkit.parkingsystem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,27 +38,9 @@ public class FareCalculatorServiceTest {
 
 	@Mock
 	private static TicketDAO ticketDAO;
-
-	@Mock
+	
 	private Ticket ticket;
 
-	@Mock
-	private DataBaseConfig dataBaseConfig;
-
-	@Mock
-	private static InputReaderUtil inputReaderUtil;
-
-	@Mock
-	private static ParkingService parkingService;
-
-	@Mock
-	private Connection con;
-
-	@Mock
-	private PreparedStatement ps;
-
-	@Mock
-	private ResultSet rs;
 	String vehicleRegNumber = "TOTO";
 	Logger logger = LogManager.getLogger(TicketDAOTest.class);
 	private static LogCaptor logcaptor;
@@ -65,8 +48,6 @@ public class FareCalculatorServiceTest {
 	@BeforeAll
 	private static void setUp() {
 		fareCalculatorService = new FareCalculatorService();
-		ticketDAO = new TicketDAO();
-		fareCalculatorService.setTicketDAO(ticketDAO);
 
 	}
 
@@ -74,8 +55,6 @@ public class FareCalculatorServiceTest {
 	private void setUpPerTest() {
 
 		ticket = new Ticket();
-		ticketDAO = new TicketDAO();
-		ticketDAO.dataBaseConfig = dataBaseConfig;
 		ticket.setId(3);
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
@@ -90,7 +69,7 @@ public class FareCalculatorServiceTest {
 	@Test
 	public void calculateFareCar() {
 		// GIVEN
-
+		when(ticketDAO.isRecurring(anyString())).thenReturn(true);
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(40));

@@ -55,7 +55,7 @@ class DBConstantsTest {
 	public void verifyQueryCyclicUser() {
 
 		assertEquals(DBConstants.CYCLIC_USER,
-				"SELECT * FROM ticket WHERE VEHICLE_REG_NUMBER=? and OUT_TIME IS NOT NULL");
+				"SELECT FROM ticket WHERE VEHICLE_REG_NUMBER=? and OUT_TIME IS NOT NULL");
 
 	}
 
