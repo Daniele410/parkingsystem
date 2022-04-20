@@ -206,6 +206,7 @@ public class ParkingDataBaseIT {
 		ticket.setInTime(LocalDateTime.now().minusMinutes(40));
 
 		ticketDAO.updateTicket(ticket);
+		//Le test va trop vite pour le calcul de temps
 		Thread.sleep(1000);
 		// When
 
@@ -227,6 +228,7 @@ public class ParkingDataBaseIT {
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 		
 		ticketDAO.updateTicket(ticket);
+		//Le test va trop vite pour le calcul de temps
 		Thread.sleep(1000);
 		
 		// When
