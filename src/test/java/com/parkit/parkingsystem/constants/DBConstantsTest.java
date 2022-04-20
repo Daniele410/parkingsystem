@@ -55,7 +55,7 @@ class DBConstantsTest {
 	public void verifyQueryCyclicUser() {
 
 		assertEquals(DBConstants.CYCLIC_USER,
-				"SELECT FROM ticket WHERE VEHICLE_REG_NUMBER=? and OUT_TIME IS NOT NULL");
+				"SELECT * FROM ticket WHERE VEHICLE_REG_NUMBER=? and OUT_TIME IS NOT NULL");
 
 	}
 
@@ -63,7 +63,7 @@ class DBConstantsTest {
 	public void verifyQuerySaveTicket() {
 
 		assertEquals(DBConstants.IS_CAR_INSIDE,
-				"select min(VEHICLE_REG_NUMBER) from ticket  where VEHICLE_REG_NUMBER = ? and OUT_TIME is NULL ");
+				"select * from ticket where VEHICLE_REG_NUMBER=? and OUT_TIME is NULL");
 
 	}
 
