@@ -66,6 +66,7 @@ public class Ticket  {
 			this.outTime = outTime;
 	}
 
+	
 	public ParkingSpot getParkingSpot() {
 				return parkingSpot;
 	}
@@ -74,7 +75,6 @@ public class Ticket  {
 		this.parkingSpot = parkingSpot;
 		
 	}
-	
 	
 
 }
