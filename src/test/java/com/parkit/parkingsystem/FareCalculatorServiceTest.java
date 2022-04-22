@@ -1,127 +1,323 @@
 package com.parkit.parkingsystem;
 
-import com.parkit.parkingsystem.constants.Fare;
-import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.model.ParkingSpot;
-import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.service.FareCalculatorService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDateTime;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.parkit.parkingsystem.constants.Fare;
+import com.parkit.parkingsystem.constants.ParkingType;
+import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.model.ParkingSpot;
+import com.parkit.parkingsystem.model.Ticket;
+import com.parkit.parkingsystem.service.FareCalculatorService;
 
-import java.util.Date;
+import nl.altindag.log.LogCaptor;
 
+@ExtendWith(MockitoExtension.class)
 public class FareCalculatorServiceTest {
 
-    private static FareCalculatorService fareCalculatorService;
-    private Ticket ticket;
+	private static FareCalculatorService fareCalculatorService;
 
-    @BeforeAll
-    private static void setUp() {
-        fareCalculatorService = new FareCalculatorService();
-    }
+	@Mock
+	private static TicketDAO ticketDAO;
 
-    @BeforeEach
-    private void setUpPerTest() {
-        ticket = new Ticket();
-    }
+	private Ticket ticket;
 
-    @Test
-    public void calculateFareCar(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+	String vehicleRegNumber = "TOTO";
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_HOUR);
-    }
+	Logger logger = LogManager.getLogger(TicketDAOTest.class);
+	private static LogCaptor logcaptor;
 
-    @Test
-    public void calculateFareBike(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
+	@BeforeAll
+	private static void setUp() {
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), Fare.BIKE_RATE_PER_HOUR);
-    }
+		fareCalculatorService = new FareCalculatorService();
+		TicketDAO dao = Mockito.mock(TicketDAO.class);
+		fareCalculatorService.setTicketDAO(dao);
 
-    @Test
-    public void calculateFareUnkownType(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, null,false);
+	}
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
-    }
+	@BeforeEach
+	private void setUpPerTest() {
 
-    @Test
-    public void calculateFareBikeWithFutureInTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() + (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
+		ticket = new Ticket();
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
-    }
+		ticket.setId(3);
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
+		ticket.setPrice(1);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(null);
+		logcaptor = LogCaptor.forName("FareCalculatorService");
+		logcaptor.setLogLevelToInfo();
 
-    @Test
-    public void calculateFareBikeWithLessThanOneHourParkingTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  45 * 60 * 1000) );//45 minutes parking time should give 3/4th parking fare
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
+	}
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals((0.75 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice() );
-    }
+	@Test
+	public void calculateFareCar() {
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(40));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+		// When
+		fareCalculatorService.calculateFare(ticket);
 
-    @Test
-    public void calculateFareCarWithLessThanOneHourParkingTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  45 * 60 * 1000) );//45 minutes parking time should give 3/4th parking fare
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+		// Then
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals( (0.75 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
-    }
+		assertEquals(ticket.getPrice(), 40 * Fare.CAR_RATE_PER_MINUTE);
+	}
 
-    @Test
-    public void calculateFareCarWithMoreThanADayParkingTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  24 * 60 * 60 * 1000) );//24 hours parking time should give 24 * parking fare per hour
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+	@Test
+	public void calculateFareBike() {
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(40));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+		// WHen
+		fareCalculatorService.calculateFare(ticket);
 
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals( (24 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
-    }
+		// Then
+
+		assertEquals(ticket.getPrice(), 40 * Fare.BIKE_RATE_PER_MINUTE);
+	}
+
+	@Test
+	public void calculateFareCarWithoutDiscount() {
+
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(50));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_MINUTE * 50);
+	}
+
+	@Test
+	public void calculateFareShouldExceptionTestGetOutTimeIsMinusOfInTime() throws IllegalArgumentException {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().minusMinutes(30));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+
+		// Then
+
+		assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
+
+	@Test
+	public void calculateFareUnkownType() {
+
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, null, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+
+		// Then
+		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
+
+	@Test
+	public void calculateFareBikeWithLessThanOneHourParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(45));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((0.75 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareCarWithLessThanOneHourParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(45));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((0.75 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareCarWithMoreThanADayParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusHours(24));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((24 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareCarWithLessThanThirtyMinutesParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
+		ticket.setVehicleRegNumber("TOTO");
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((0 * Fare.CAR_RATE_PER_MINUTE), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareBikeWithLessThanThrityMinutesParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(25));
+		ticket.setVehicleRegNumber("TOTO");
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareCarWithLessThanHalfAnOurParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
+		ticket.setVehicleRegNumber("TOTO");
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((0 * Fare.CAR_RATE_PER_MINUTE), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareBikeWithLessThanHalfAnHourParkingTime() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((0 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareBikeWithMoreThanHalfAnHourParkingTime() {
+
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((35 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareBikeWithMoreThanHalfAnHourParkingTimeAndDiscount() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		ticket.setParkingSpot(parkingSpot);
+
+		// When
+
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((35 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
+	}
+
+	@Test
+	public void calculateFareCarGotOutTimeWhenIsNull() throws Exception {
+
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setVehicleRegNumber("TOTO");
+		ticket.setOutTime(null);
+		ticket.setParkingSpot(parkingSpot);
+
+		// Then
+		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
+	
 
 }

@@ -1,1 +1,11 @@
+<<<<<<< HEAD
 /target/
+=======
+<<<<<<< HEAD
+/target/
+/bin/
+=======
+/bin/
+/target/
+>>>>>>> feature
+>>>>>>> develop
