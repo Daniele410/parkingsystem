@@ -2,6 +2,7 @@ package com.parkit.parkingsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -32,7 +33,7 @@ import nl.altindag.log.LogCaptor;
 public class ParkingServiceTest {
 
 	private static ParkingService parkingService;
-	
+
 	private static LogCaptor logcaptor;
 
 	@Mock
@@ -45,8 +46,6 @@ public class ParkingServiceTest {
 	FareCalculatorService fareCalculatorService = new FareCalculatorService();
 	@Mock
 	private Ticket ticket;
-
-	
 
 	@BeforeEach
 	private void setUpPerTest() throws Exception {
@@ -63,23 +62,23 @@ public class ParkingServiceTest {
 		logcaptor.setLogLevelToInfo();
 
 	}
-	
+
 	@Test
 	public void processIncomingVehicleTestLogCaptorIllegalArgumentException() throws Exception {
 		// Given
 
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenThrow(IllegalArgumentException.class);
-	
 
 		// When
 		parkingService.processIncomingVehicle();
 		// Then
 		assertThat(logcaptor.getErrorLogs()).contains("Error parsing user input for type of vehicle");
 	}
-
-
 	
+	
+	
+
 	@Test
 	public void getNextParkingNumberIfAvailableCarTest() {
 
@@ -87,14 +86,15 @@ public class ParkingServiceTest {
 		ParkingType parkingType = ParkingType.CAR;
 		ParkingSpot parkingSpot = new ParkingSpot(1, parkingType, true);
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-		
+
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(parkingSpotDAO.getNextAvailableSlot(parkingType)).thenReturn(1);
 
 		// Then
 		assertEquals(parkingSpot, parkingService.getNextParkingNumberIfAvailable());
 	}
-	
+
+
 	@Test
 	public void getVehicleTypeTestCar() {
 
@@ -110,7 +110,6 @@ public class ParkingServiceTest {
 		// Then
 		assertEquals(ParkingType.CAR, parkingService.getVehichleType());
 	}
-
 
 	@Test
 	public void getVehicleTypeTestBike() {
@@ -141,8 +140,6 @@ public class ParkingServiceTest {
 		verify(parkingSpotDAO, times(1)).getNextAvailableSlot(ParkingType.CAR);
 		assertNull(parkingSpot);
 	}
-	
-	
 
 	@Test
 	public void getVehicleTypeButIllegalArgumentExceptionIsThrown() {
@@ -153,6 +150,8 @@ public class ParkingServiceTest {
 		// Assert
 		assertThrows(IllegalArgumentException.class, () -> parkingService.getVehichleType());
 	}
+	
+	
 
 	@Test
 	public void processExitingVehicleWithGoodTicket() throws Exception {
@@ -171,9 +170,7 @@ public class ParkingServiceTest {
 		// Then
 		verify(parkingSpotDAO).updateParking(parkingSpot);
 	}
-		
-	
-	
+
 	@Test
 	public void processExitingVehicleTestLogCaptor() throws Exception {
 
@@ -184,76 +181,113 @@ public class ParkingServiceTest {
 		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
 		when(ticketDAO.isCarInside("ABCDEF")).thenReturn(false);
 
-		
 		// When
 		parkingService.processExitingVehicle();
 
 		// Then
 		assertThat(logcaptor.getErrorLogs()).contains("Unable to update ticket information. Error occurred");
 	}
-	
-	
+
 	@Test
 	public void processExitingVehicleTicketNullTestLogCaptor() throws Exception {
-		
-		//Given
+
+		// Given
 		String vehicleRegNumber = "ABCDEF";
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
 		ticket.setParkingSpot(parkingSpot);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-		
-		
+
 		// When
 		parkingService.processExitingVehicle();
 
 		// Then
 		assertThat(logcaptor.getErrorLogs()).contains("Unable to process exiting vehicle");
-		
+
 	}
-		
-		
-		@Test
-		public void processIncomingVehicleIsCarInsideIsRecurringTestLogCaptor() throws Exception {
-			// Given
-			String vehicleRegNumber = "qwerty";
-			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-			Ticket ticket = new Ticket();
-			ticket.setInTime(LocalDateTime.now());
-			ticket.setParkingSpot(parkingSpot);
-			ticket.setId(1);
-			when(inputReaderUtil.readSelection()).thenReturn(1);
-			when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-			when(ticketDAO.isCarInside(anyString())).thenReturn(false);
-			when(ticketDAO.isRecurring(anyString())).thenReturn(true);
-			
+
+	@Test
+	public void processExitingVehicleIsNotInsideTestLogCaptor() throws Exception {
+
+		// Given
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setParkingSpot(parkingSpot);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		when(ticketDAO.getTicket("ABCDEF")).thenReturn(ticket);
+		when(ticketDAO.isCarInside("ABCDEF")).thenReturn(true);
+		when(ticketDAO.updateTicket(ticket)).thenReturn(false);
+
+		// When
+		parkingService.processExitingVehicle();
+
+		// Then
+		assertThat(logcaptor.getErrorLogs()).contains("Unable to update ticket information. Error occurred");
+
+	}
+
+	@Test
+	public void processIncomingVehicleIsCarInsideIsRecurringTestLogCaptor() throws Exception {
+		// Given
+		String vehicleRegNumber = "qwerty";
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setId(1);
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
+		when(ticketDAO.isCarInside(anyString())).thenReturn(false);
+		when(ticketDAO.isRecurring(anyString())).thenReturn(true);
+
+		// When
+		parkingService.processIncomingVehicle();
+
+		// Then
+		assertThat(logcaptor.getInfoLogs())
+				.contains("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
+	}
 	
-			// When
-			parkingService.processIncomingVehicle();
-			
-			// Then
-			assertThat(logcaptor.getInfoLogs()).contains("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
-		}
-		
-		@Test
-		public void processIncomingVehicleIsCarInsideTrueTestLogCaptor() throws Exception  {
-			// Given
-			String vehicleRegNumber = "qwerty";
-			ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
-			Ticket ticket = new Ticket();
-			ticket.setInTime(LocalDateTime.now());
-			ticket.setParkingSpot(parkingSpot);
-			ticket.setId(1);
-			when(inputReaderUtil.readSelection()).thenReturn(1);
-			when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
-			when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
-			when(ticketDAO.isCarInside(anyString())).thenReturn(true);
-			
-			
-			// When
-			parkingService.processIncomingVehicle();
-			
-			// Then
-			assertThat(logcaptor.getInfoLogs()).contains("Car Already Inside please exit your car or select another vehicule registration number");
-		}
+	@Test
+	public void processIncomingVehicleIsCarInsideIsRecurringFalseTestLogCaptor() throws Exception {
+		// Given
+		String vehicleRegNumber = "qwerty";
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setId(1);
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
+		when(ticketDAO.isCarInside(anyString())).thenReturn(false);
+		when(ticketDAO.isRecurring(anyString())).thenReturn(false);
+
+		// When
+		parkingService.processIncomingVehicle();
+
+		// Then
+		assertFalse(ticketDAO.isRecurring(vehicleRegNumber));
+	}
+
+	@Test
+	public void processIncomingVehicleIsCarInsideTrueTestLogCaptor() throws Exception {
+		// Given
+		String vehicleRegNumber = "qwerty";
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		Ticket ticket = new Ticket();
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setParkingSpot(parkingSpot);
+		ticket.setId(1);
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegNumber);
+		when(ticketDAO.isCarInside(anyString())).thenReturn(true);
+
+		// When
+		parkingService.processIncomingVehicle();
+
+		// Then
+		assertThat(logcaptor.getInfoLogs())
+				.contains("Car Already Inside please exit your car or select another vehicule registration number");
+	}
 }

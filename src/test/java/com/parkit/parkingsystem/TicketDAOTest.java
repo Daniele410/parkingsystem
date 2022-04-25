@@ -317,6 +317,23 @@ public class TicketDAOTest {
 		// Then
 		assertFalse(result);
 	}
+	
+	@Test
+	public void isCarInside_ShouldReturnFalseResultSetIsNull() throws Exception {
+		// Given
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		when(con.prepareStatement(DBConstants.IS_CAR_INSIDE)).thenReturn(ps);
+		when(ps.executeQuery()).thenReturn(rs);
+		when(rs.next()).thenReturn(true);
+		when(rs.getString(1)).thenReturn(null);
+		
+
+		// When
+		boolean result = ticketDAO.isCarInside(vehicleRegNumber);
+
+		// Then
+		assertFalse(result);
+	}
 
 	@Test
 	public void isCarInside_withExceptionShouldReturnException() throws Exception {
@@ -335,74 +352,6 @@ public class TicketDAOTest {
 		assertFalse(result);
 	}
 
-//	@Test
-//	public void isSavedTicket_ReturnTrue() throws Exception {
-//		// Given
-//		
-//		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
-//		when(ps.executeQuery()).thenReturn(rs);
-//		when(rs.next()).thenReturn(true);
-//
-//	
-//		// When
-//		boolean result = ticketDAO.isSaved(vehicleRegNumber);
-//
-//		// Then
-//
-//		assertTrue(result);
-//	}
-//	
-//	@Test
-//	public void isSavedTicket_ShouldReturnReturnException() throws Exception {
-//		// Given
-//		ticket.setVehicleRegNumber(vehicleRegNumber);
-//		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
-//		when(ps.executeQuery()).thenReturn(rs);
-//		when(rs.next()).thenThrow(SQLException.class);
-//		
-//		
-//		// When
-//	
-//		boolean result = ticketDAO.isSaved(vehicleRegNumber);
-//
-//		// Then
-//		assertThat(logcaptor.getErrorLogs()).contains("Error fetching recurring vehicle ");
-//		assertFalse(result);
-//	}
-	
-//	@Test
-//	public void isSavedTicket_withExceptionShouldReturnTrue() throws Exception {
-//		// Given
-//		ticket.setVehicleRegNumber(vehicleRegNumber);
-//		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
-//		when(ps.executeQuery()).thenReturn(rs);
-//		when(rs.next()).thenReturn(true);
-//		
-//
-//		// When
-//		
-//		boolean result = ticketDAO.isSaved(vehicleRegNumber);
-//
-//		// Then
-//		assertTrue(result);
-//	}
-	
-//	@Test
-//	public void isSavedTicket_withExceptionShouldReturnFalse() throws Exception {
-//		// Given
-//		ticket.setVehicleRegNumber(vehicleRegNumber);
-//		when(con.prepareStatement(DBConstants.SAVE_TICKET)).thenReturn(ps);
-//		when(ps.executeQuery()).thenReturn(rs);
-//		when(rs.next()).thenReturn(false);
-//		
-//
-//		// When
-//		
-//		boolean result = ticketDAO.isSaved(vehicleRegNumber);
-//
-//		// Then
-//		assertFalse(result);
-//	}
 
 	@Test
 	public void updateTicket_withExceptionShouldReturnFalse() throws Exception {

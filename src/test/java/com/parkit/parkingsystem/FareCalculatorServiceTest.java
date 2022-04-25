@@ -293,7 +293,7 @@ public class FareCalculatorServiceTest {
 		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE, false);
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setVehicleRegNumber(vehicleRegNumber);
-		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(50));
 		ticket.setParkingSpot(parkingSpot);
 
 		// When
@@ -301,9 +301,24 @@ public class FareCalculatorServiceTest {
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals((35 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
+		assertEquals((50 * Fare.BIKE_RATE_PER_MINUTE ), ticket.getPrice());
 	}
 
+	@Test
+	void calculateFare_UnkownType() {
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.UNKNOWN, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
+		ticket.setParkingSpot(parkingSpot);
+
+		// When & Then
+		assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
+	}
+	
+	
 	@Test
 	public void calculateFareCarGotOutTimeWhenIsNull() throws Exception {
 
@@ -318,6 +333,5 @@ public class FareCalculatorServiceTest {
 		// Then
 		assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
 	}
-	
 
 }
