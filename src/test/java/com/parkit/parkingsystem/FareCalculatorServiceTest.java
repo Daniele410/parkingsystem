@@ -52,13 +52,13 @@ public class FareCalculatorServiceTest {
 	private void setUpPerTest() {
 
 		ticket = new Ticket();
-//
-//		ticket.setId(3);
-//		ticket.setVehicleRegNumber(vehicleRegNumber);
-//		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
-//		ticket.setPrice(1);
-//		ticket.setInTime(LocalDateTime.now());
-//		ticket.setOutTime(null);
+
+		ticket.setId(3);
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
+		ticket.setPrice(1);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(null);
 		logcaptor = LogCaptor.forName("FareCalculatorService");
 		logcaptor.setLogLevelToInfo();
 
