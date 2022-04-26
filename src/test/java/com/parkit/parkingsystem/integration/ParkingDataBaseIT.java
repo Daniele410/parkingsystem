@@ -1,5 +1,6 @@
 package com.parkit.parkingsystem.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,7 +40,9 @@ public class ParkingDataBaseIT {
 
 	private static TicketDAO ticketDAO;
 
-	// Class to be tested
+	/**
+	 * Class to be tested
+	 */
 
 	private static ParkingService parkingService;
 
@@ -57,7 +60,7 @@ public class ParkingDataBaseIT {
 		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
 		ticketDAO = new TicketDAO();
 		ticketDAO.dataBaseConfig = dataBaseTestConfig;
-		
+
 		dataBasePrepareService.clearDataBaseEntries();
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 		logcaptor = LogCaptor.forName("ParkingService");
@@ -68,7 +71,7 @@ public class ParkingDataBaseIT {
 	private void setUpPerTest() throws Exception {
 		System.out.println("BEFORE EACH");
 		parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-		
+
 		dataBasePrepareService.clearDataBaseEntries();
 	}
 
@@ -81,10 +84,11 @@ public class ParkingDataBaseIT {
 	@Test
 	public void testParkingCar() throws Exception {
 
-		// Given + Act
+		// Given + When
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
 		parkingService.processIncomingVehicle();
+
 		// Then
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		assertNotNull(ticket);
@@ -96,7 +100,7 @@ public class ParkingDataBaseIT {
 	@Test
 	public void testParkingBike() throws Exception {
 
-		// Given
+		// Given + When
 		when(inputReaderUtil.readSelection()).thenReturn(2);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
 		parkingService.processIncomingVehicle();
@@ -167,12 +171,11 @@ public class ParkingDataBaseIT {
 
 	}
 
-	
 	@Test
-	public void testParkingLotExitWhitDiscountRecurringUser() throws Exception {
+	public void testParkingLotExitCarWhitDiscountRecurringUser() throws Exception {
 
 		// Given
-		
+
 		when(inputReaderUtil.readSelection()).thenReturn(1);
 		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
 		parkingService.processIncomingVehicle();
@@ -182,19 +185,60 @@ public class ParkingDataBaseIT {
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
 		ticketDAO.updateTicket(ticket);
-		//Le test va trop vite pour le calcul de temps
+		// Le test va trop vite pour le calcul de temps
 		Thread.sleep(1000);
 
-		
 		// When
-		
 		parkingService.processExitingVehicle();
+
 		// Then
 		assertEquals(35 * Fare.CAR_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
 
 	}
 
-	
+	@Test
+	public void testParkingLotExitBikeWhitDiscountRecurringUser() throws Exception {
+
+		// Given
+
+		when(inputReaderUtil.readSelection()).thenReturn(2);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
+		parkingService.processIncomingVehicle();
+		Thread.sleep(1000);
+		parkingService.processExitingVehicle();
+		parkingService.processIncomingVehicle();
+		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
+		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
+		ticketDAO.updateTicket(ticket);
+		// Le test va trop vite pour le calcul de temps
+		Thread.sleep(1000);
+
+		// When
+		parkingService.processExitingVehicle();
+
+		// Then
+		assertEquals(35 * Fare.BIKE_RATE_PER_MINUTE * 0.95, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
+
+	}
+
+	@Test
+	public void testParkingLotSameUserInASameParkingLogCaptor() throws Exception {
+
+		// Given
+
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
+		parkingService.processIncomingVehicle();
+
+		// When
+		parkingService.processIncomingVehicle();
+
+		// Then
+		assertThat(logcaptor.getInfoLogs())
+				.contains("Car Already Inside please exit your car or select another vehicule registration number");
+
+	}
+
 	@Test
 	public void calculateFareCarWithLessThanOneHourParkingTime() throws Exception {
 
@@ -204,19 +248,18 @@ public class ParkingDataBaseIT {
 		parkingService.processIncomingVehicle();
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(40));
-
 		ticketDAO.updateTicket(ticket);
-		//Le test va trop vite pour le calcul de temps
+		// Le test va trop vite pour le calcul de temps
 		Thread.sleep(1000);
+		
 		// When
-
 		parkingService.processExitingVehicle();
+		
 		// Then
-		assertEquals(40 * Fare.CAR_RATE_PER_MINUTE , ticketDAO.getTicket(vehiculeRegNumber).getPrice());
+		assertEquals(40 * Fare.CAR_RATE_PER_MINUTE, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
 
 	}
 
-	
 	@Test
 	public void calculateFareBikeWithLessThanOneHourParkingTime() throws Exception {
 
@@ -226,20 +269,37 @@ public class ParkingDataBaseIT {
 		parkingService.processIncomingVehicle();
 		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
 		ticket.setInTime(LocalDateTime.now().minusMinutes(35));
-		
 		ticketDAO.updateTicket(ticket);
-		//Le test va trop vite pour le calcul de temps
+		// Le test va trop vite pour le calcul de temps
 		Thread.sleep(1000);
-		
+
 		// When
 
 		parkingService.processExitingVehicle();
 		// Then
-		assertEquals(35 * Fare.BIKE_RATE_PER_MINUTE , ticketDAO.getTicket(vehiculeRegNumber).getPrice());
+		assertEquals(35 * Fare.BIKE_RATE_PER_MINUTE, ticketDAO.getTicket(vehiculeRegNumber).getPrice());
 
 	}
 
-	
+	@Test
+	public void testFreeParkingCarLotExitWhitDiscount() throws Exception {
+
+		// Given
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehiculeRegNumber);
+		parkingService.processIncomingVehicle();
+		Ticket ticket = ticketDAO.getTicket(vehiculeRegNumber);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
+
+		// When
+		parkingService.processExitingVehicle();
+
+		// Then
+		assertEquals(0 * Fare.CAR_RATE_PER_MINUTE, ticket.getPrice());
+
+	}
+
 	@Test
 	public void testFreeParkingBikeLotExitWhitDiscount() throws Exception {
 

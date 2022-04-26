@@ -2,6 +2,7 @@ package com.parkit.parkingsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.parkit.parkingsystem.constants.Fare;
@@ -43,8 +43,7 @@ public class FareCalculatorServiceTest {
 	private static void setUp() {
 
 		fareCalculatorService = new FareCalculatorService();
-		TicketDAO dao = Mockito.mock(TicketDAO.class);
-		fareCalculatorService.setTicketDAO(dao);
+
 
 	}
 
@@ -52,7 +51,7 @@ public class FareCalculatorServiceTest {
 	private void setUpPerTest() {
 
 		ticket = new Ticket();
-
+		fareCalculatorService.setTicketDAO(ticketDAO);
 		ticket.setId(3);
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, true));
@@ -72,6 +71,8 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(40));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
+
 		// When
 		fareCalculatorService.calculateFare(ticket);
 
@@ -88,6 +89,8 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(40));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
+
 		// WHen
 		fareCalculatorService.calculateFare(ticket);
 
@@ -105,6 +108,8 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(50));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
+
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
@@ -152,6 +157,8 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(45));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
+
 		// When
 		fareCalculatorService.calculateFare(ticket);
 
@@ -169,6 +176,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(45));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
@@ -187,6 +195,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusHours(24));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
@@ -205,6 +214,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(15));
 		ticket.setVehicleRegNumber("TOTO");
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
@@ -223,6 +233,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(25));
 		ticket.setVehicleRegNumber("TOTO");
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
@@ -241,6 +252,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
 		ticket.setVehicleRegNumber("TOTO");
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
@@ -259,7 +271,7 @@ public class FareCalculatorServiceTest {
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(20));
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setParkingSpot(parkingSpot);
-
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 		// When
 		fareCalculatorService.calculateFare(ticket);
 
@@ -275,14 +287,34 @@ public class FareCalculatorServiceTest {
 		ticket.setInTime(LocalDateTime.now());
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(35));
-
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(false);
 
 		// When
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
 		assertEquals((35 * Fare.BIKE_RATE_PER_MINUTE), ticket.getPrice());
+	}
+	
+	@Test
+	public void calculateFareCarWithMoreThanHalfAnHourParkingTimeAndDiscount() {
+
+		// Given
+
+		ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+		ticket.setInTime(LocalDateTime.now());
+		ticket.setVehicleRegNumber(vehicleRegNumber);
+		ticket.setOutTime(LocalDateTime.now().plusMinutes(50));
+		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(true);
+
+		// When
+
+		fareCalculatorService.calculateFare(ticket);
+
+		// Then
+		assertEquals((50 * Fare.CAR_RATE_PER_MINUTE* 0.95 ), ticket.getPrice());
 	}
 
 	@Test
@@ -295,13 +327,14 @@ public class FareCalculatorServiceTest {
 		ticket.setVehicleRegNumber(vehicleRegNumber);
 		ticket.setOutTime(LocalDateTime.now().plusMinutes(50));
 		ticket.setParkingSpot(parkingSpot);
+		when(ticketDAO.isRecurring(vehicleRegNumber)).thenReturn(true);
 
 		// When
 
 		fareCalculatorService.calculateFare(ticket);
 
 		// Then
-		assertEquals((50 * Fare.BIKE_RATE_PER_MINUTE ), ticket.getPrice());
+		assertEquals((50 * Fare.BIKE_RATE_PER_MINUTE* 0.95 ), ticket.getPrice());
 	}
 
 	@Test
