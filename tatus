@@ -1,0 +1,284 @@
+[33mcommit d86931e4459d49ba35d4751614bdcc31c05a32f8[m[33m ([m[1;36mHEAD -> [m[1;32mfeature[m[33m, [m[1;31morigin/feature[m[33m)[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Apr 27 00:52:30 2022 +0200
+
+    fix test
+
+[33mcommit 3eb0890b0e0e9482f6c4aba45de73cd7e5c39f5b[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 26 16:33:08 2022 +0200
+
+    fix
+
+[33mcommit 36701caf083f4fe16fcb9af7a5b69551a38f6e12[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 26 16:31:59 2022 +0200
+
+    fix FareCalculationTest add test
+
+[33mcommit 5cf76f86df72f038f2a921532d7c304bf9ce0980[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Apr 25 13:22:22 2022 +0200
+
+    last fix
+
+[33mcommit d6bce7ba59319b8169663382beca0e495669fc3f[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Apr 25 13:21:48 2022 +0200
+
+    last fix
+
+[33mcommit 155979195c9518dee4f21dcae4c8c497f7c6d214[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Sun Apr 24 12:59:33 2022 +0200
+
+    add test
+
+[33mcommit 7100b2ee4518ffdf300ff0c268fde491991a0726[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Fri Apr 22 19:04:26 2022 +0200
+
+    generate javadoc
+
+[33mcommit 05b70a2bf124641708dfdcc93fdb70a0a372f7a4[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Fri Apr 22 19:02:01 2022 +0200
+
+    add coverage test
+
+[33mcommit 3dc7a9a547454802d400139308d5a78a6739252d[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Fri Apr 22 16:49:26 2022 +0200
+
+    fix bugs in ticket class (parkingSpot)
+
+[33mcommit a7e98a8fb900230db24395c5fb900374ccba60c3[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Thu Apr 21 17:28:13 2022 +0200
+
+    fix all bugs database
+
+[33mcommit cde3ef5ab9559096c2ba6450c1117e4b3a73bf18[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Apr 20 16:15:57 2022 +0200
+
+    fix test unit test
+
+[33mcommit 166d238edd8c7b95f0a44c1d21758b4b8cee0e76[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Apr 20 13:16:14 2022 +0200
+
+    generate Javadoc
+
+[33mcommit 14d2abf4390eedb12d7e9b14f77c51a208dbdca0[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Apr 20 13:13:32 2022 +0200
+
+    fix test FareCalculatorServiceTest
+
+[33mcommit 4e3caf2586936c5c64cd90b42c52180faf35e87f[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 19 15:50:29 2022 +0200
+
+    fixed discount problem in IT test
+
+[33mcommit b57e961d378087082b03a053ee6733d25e6b06c4[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 19 12:43:05 2022 +0200
+
+    other fix add Javadoc
+
+[33mcommit 087c49c82db2dd4122bfa665965e338c8e299767[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 19 12:22:04 2022 +0200
+
+    other fix add Javadoc
+
+[33mcommit a56130254d2495fd6d94fe7d6b3a046f1450e98f[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Sat Apr 16 18:34:38 2022 +0200
+
+    generate javadoc
+
+[33mcommit 85b4882de59f2d7c027ea9e2dea300792d79c599[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Sat Apr 16 17:37:49 2022 +0200
+
+    fix any problem in parking service and others fatures
+
+[33mcommit 1c0cb80cf9a36c52abc7989f103b71506bd4fd5f[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Thu Apr 14 15:54:16 2022 +0200
+
+    fix is inside car
+
+[33mcommit 6263a32b753142e6543e74d3c1f4ab04f507de97[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Apr 13 16:24:49 2022 +0200
+
+    fix bug interactiveShell and ParkingSpotDAO
+
+[33mcommit 98297832869951475b33170fba797e8be728ce24[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 12 16:50:12 2022 +0200
+
+    change jacoco ver. in POM (mvn test OK)
+
+[33mcommit 2d54c400810cb6dd6ca89ab3537ce845bf71d951[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 12 16:14:52 2022 +0200
+
+    fix pom problem SureFire and SpotBugs
+
+[33mcommit afd3044f30fc0f1c543340d6c824ac4379cca596[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Apr 11 16:34:20 2022 +0200
+
+     fix athers tests
+
+[33mcommit c8aac149e4d532778184dec94ff6455fa26ccff1[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Sat Apr 9 13:07:34 2022 +0200
+
+    fix DAO
+
+[33mcommit 30a736a35dbc7649613624d1a9c046dacc29ce32[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Thu Apr 7 17:11:52 2022 +0200
+
+    fix test and ParkingService
+
+[33mcommit 8e5df266cc4b3b00c41ff66755a706010d2be04d[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 5 16:19:54 2022 +0200
+
+    fix and add Integration test
+
+[33mcommit 47e0f52644c9b26172212324e773d1213b6870df[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Apr 5 00:45:04 2022 +0200
+
+    add integrationTest
+
+[33mcommit 85cc097da2fa7e97f29842cae4f82943f3cc9879[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Fri Apr 1 23:43:32 2022 +0200
+
+    fix test
+
+[33mcommit 25e5d3abc34d4c60a9528a7b2ef90dd6eb01f51a[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Fri Apr 1 11:38:53 2022 +0200
+
+    add test
+
+[33mcommit 51d31e7ed1f401c77b12caf5ef2a29cf6d2547be[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Mar 28 21:54:18 2022 +0200
+
+    add test
+
+[33mcommit 3a02e3dd12416198138848363afe89cf87fc4e5e[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Mar 22 17:59:57 2022 +0100
+
+    add test
+
+[33mcommit 77cfd24fd3243c8e7f34901fecfad3cff32d0c8b[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Mar 15 16:16:44 2022 +0100
+
+    add TicketDao test
+
+[33mcommit 07db96ef069b8b46b0aa1a116df52320289130a3[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Mar 15 13:38:15 2022 +0100
+
+    add tryTest TicketDao
+
+[33mcommit 44cf714c5405bed8792a9c6debaff33c24269162[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Mar 15 13:14:14 2022 +0100
+
+    add test ParkingSpotDao
+
+[33mcommit 01bb4ff299ef33b0b258bba191fb06af78fd688f[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Mar 15 10:49:13 2022 +0100
+
+    add test ParkingSpotDao
+
+[33mcommit a78242ede67f89aefd7ed0374c5a17bfa5a5997e[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Mar 8 16:20:51 2022 +0100
+
+    add report plugins in pom.xml
+
+[33mcommit 9aea95327c222a49db146da4c1f5b9d167066cc5[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Mar 7 16:09:33 2022 +0100
+
+    add test
+
+[33mcommit 5e82366ca6fae365293c69de9af363906a651a8e[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Sat Feb 26 15:59:44 2022 +0100
+
+    Other Fix
+
+[33mcommit 11c51d83f7f3a3d6810ce73947dd4afd0d42280a[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Feb 23 16:21:38 2022 +0100
+
+    mod pom.xml
+
+[33mcommit 52f0f3eb8b8e7eb8aef7a1df3df48d9b56879454[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Feb 23 10:15:50 2022 +0100
+
+    add test
+
+[33mcommit ffbe01089db0a6fbe9ee35ff9a11995b9f598cc6[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Feb 21 18:49:20 2022 +0100
+
+    Fix test
+
+[33mcommit c25094af8014a24f8060e00d11a3605613d8b755[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Thu Feb 17 17:15:45 2022 +0100
+
+    Fix test
+
+[33mcommit e9e696a60c7bc5c49e8a238577dfe1e4a78e6d73[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Wed Feb 16 16:24:24 2022 +0100
+
+    fix unit test
+
+[33mcommit 25b4ae3a3ec778e5f9d0127eb5af13328c5eeb37[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Feb 8 17:21:07 2022 +0100
+
+    other fix
+
+[33mcommit d304d397a7e81442e7952d516f295e4483727399[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Tue Feb 8 16:00:49 2022 +0100
+
+    add calculateDiscount
+
+[33mcommit 1e7e48d071e41cf663c75e714cbb3209bf5506cd[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Feb 7 21:37:35 2022 +0100
+
+    changement
+
+[33mcommit de0354f6788cb0940f33fbd7ce04585a34996d49[m
+Author: Daniele410 <miraglia.daniele410@gmail.com>
+Date:   Mon Feb 7 21:30:14 2022 +0100
+
+    changement
+
+[33mcommit 75a57d80deb163e423b76ffa1a307e69f5f9ef27[m
+Aut
