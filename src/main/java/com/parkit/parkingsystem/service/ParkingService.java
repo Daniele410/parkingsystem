@@ -59,7 +59,6 @@ public class ParkingService {
 
 					Ticket ticket = new Ticket();
 					// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-//					 ticket.setId(ticketID);
 					ticket.setParkingSpot(parkingSpot);
 					ticket.setVehicleRegNumber(vehicleRegNumber);
 					ticket.setPrice(0);
@@ -125,15 +124,14 @@ public class ParkingService {
 
 	public void processExitingVehicle() {
 		try {
-			
+
 			String vehicleRegNumber = getVehichleRegNumber();
 			Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
 			LocalDateTime outTime = LocalDateTime.now();
 			ticket.setOutTime(outTime);
 			fareCalculatorService.setTicketDAO(ticketDAO);
 			fareCalculatorService.calculateFare(ticket);
-			
-			
+
 			if (ticketDAO.isCarInside(vehicleRegNumber) && ticketDAO.updateTicket(ticket)) {
 				ParkingSpot parkingSpot = ticket.getParkingSpot();
 				parkingSpot.setAvailable(true);

@@ -31,14 +31,31 @@ https://maven.apache.org/install.html
 https://dev.mysql.com/downloads/mysql/
 
 After downloading the mysql 8 installer and installing it, you will be asked to configure the password for the default `root` account.
-This code uses the default root account to connect and the password can be set as `rootroot`. If you add another user/credentials make sure to change the same in the code base.
+This code uses the default root account to connect and the password can be set as `rootroot`. 
+
+For greater security the mySql connection data have been placed in a separate folder called `database.properties`
+If you add another user/credentials make sure to change the same in this file configurations.
 
 ### Running App
 
 Post installation of MySQL, Java and Maven, you will have to set up the tables and data in the data base.
 For this, please run the sql commands present in the `Data.sql` file under the `resources` folder in the code base.
 
-Finally, you will be ready to import the code into an IDE of your choice and run the App.java to launch the application.
+You can import the code into an IDE of your choice and run the App.java to launch the application or
+
+you can ready application with terminal. 
+
+Enter in the folder : `/parkingsystem`
+
+and to compile application utilise the command : `mvn package`
+
+Finally, you can run the application with the command: 
+
+ `java -jar target/parking-system-1.0-SNAPSHOT-jar-with-dependencies.jar`
+
+
+
+
 
 ### Testing
 
@@ -46,4 +63,8 @@ The app has unit tests and integration tests written. More of these need to be a
 
 To run the tests from maven, go to the folder that contains the pom.xml file and execute the below command.
 
-`mvn test`
+`mvn test` : Runs the tests against the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed.
+
+`mvn verify`: Runs all integration tests found in the project.
+
+`mvn site` :  The generated site also includes the project's reports that were configured in the POM.
